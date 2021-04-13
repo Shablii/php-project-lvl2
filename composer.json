@@ -1,0 +1,12 @@
+{
+    "name": "hexlet/code",
+    "authors": [
+        {
+            "name": "Vadim Shablii",
+            "email": "mefistovad@gmail.com"
+        }
+    ],
+    "require": {
+        "docopt/docopt": "^1.0"
+    }
+}
