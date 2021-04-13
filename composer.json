@@ -6,7 +6,9 @@
             "email": "mefistovad@gmail.com"
         }
     ],
+    "description": "php-package-lv2",
     "require": {
-        "docopt/docopt": "^1.0"
+        "docopt/docopt": "^1.0",
+        "tightenco/collect": "^8.34"
     }
 }
