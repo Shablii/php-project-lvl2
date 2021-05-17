@@ -15,6 +15,10 @@
     "description": "php-package-lv2",
     "require": {
         "docopt/docopt": "^1.0",
-        "tightenco/collect": "^8.34"
-    }
+        "tightenco/collect": "^8.34",
+        "squizlabs/php_codesniffer": "^3.6"
+    },
+    "scripts": {
+        "phpcs": "phpcs"
+        }
 }

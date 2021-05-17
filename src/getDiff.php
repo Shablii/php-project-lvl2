@@ -30,7 +30,7 @@ function getDiff($file1, $file2): string
     return implode("\n", $result);
 }
 
-function pars($str): string
+function parser($str): string
 {
     if (is_bool($str)) {
         $str = $str = (true === $str) ? "true" : "false";
