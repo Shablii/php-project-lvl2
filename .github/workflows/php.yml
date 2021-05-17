@@ -1,0 +1,26 @@
+name: Linter
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+
+    steps:
+    - name: uploud_repo
+      uses: actions/checkout@v2
+
+    - name: composer_install
+      run: composer install
+
+    - name: make_lint
+      run: make lint
+
+    # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
+    # Docs: https://getcomposer.org/doc/articles/scripts.md
+
+    # - name: Run test suite
+    #   run: composer run-script test
