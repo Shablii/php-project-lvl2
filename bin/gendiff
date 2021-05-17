@@ -3,6 +3,8 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
+use function Differ\Gendiff\getDiff;
+
 $doc = <<<DOC
 Generate diff
 
@@ -18,3 +20,12 @@ Options:
 DOC;
 
 $result = Docopt::handle($doc, array('version' => '1'));
+
+foreach ($result as $k => $v) {
+}
+$file1 = $result["<firstFile>"];
+$file2 = $result["<secondFile>"];
+
+if (is_file($file1) && is_file($file2)) {
+    print_r(getDiff($file1, $file2));
+}
