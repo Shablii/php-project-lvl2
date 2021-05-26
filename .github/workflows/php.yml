@@ -22,8 +22,10 @@ jobs:
     - name: make_test
       run: make test
 
-    # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
-    # Docs: https://getcomposer.org/doc/articles/scripts.md
-
-    # - name: Run test suite
-    #   run: composer run-script test
+    # Add Code Climate secret key
+    env:
+      CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE }}
+    with:
+      coverageCommand: make test-coverage
+      coverageLocations: ${{github.workplace}}/build/logs/clover.xml:clover
+      debug: true
