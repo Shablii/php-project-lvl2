@@ -3,7 +3,7 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
-use function Differ\Gendiff\getDiff;
+use function Differ\GetDiff\getDiff;
 
 $doc = <<<DOC
 Generate diff
