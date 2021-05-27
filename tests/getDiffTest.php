@@ -21,8 +21,8 @@ class getDiffTest extends TestCase
         }
         DOC;
 
-        $file1 = "/Users/mef4ik/LEARNING-PHP/Differ/tests/filepath1.json";
-        $file2 = "/Users/mef4ik/LEARNING-PHP/Differ/tests/filepath2.json";
+        $file1 = __DIR__ . "/fixtures/filepath1.json";
+        $file2 = __DIR__ . "/fixtures/filepath2.json";
         $this->assertEquals($expectant, getDiff($file1, $file2));
     }
 }
