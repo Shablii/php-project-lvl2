@@ -1,17 +1,15 @@
-env:
-  global:
-    - CC_TEST_REPORTER_ID=8e34ef604009610b850cfc6a372c2b7debd459e7262e843cc4e3722120f5359e
-language: php
+language: "php"
+
 php:
   - 8.0.1
 
-before_script:
-  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-  - chmod +x ./cc-test-reporter
-  - ./cc-test-reporter before-build
-script:
-  - composer update
-  - composer install
-  - composer exec --verbose phpunit tests -- --coverage-clover build/logs/clover.xml
+before_script: 
+- "composer require codeclimate/php-test-reporter --dev"
+- "composer install"
+
+script: 
+- "phpunit --testsuite=unit --coverage-text --coverage-clover build/logs/clover.xml"
+
 after_script:
-  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
+- CODECLIMATE_REPO_TOKEN="8e34ef604009610b850cfc6a372c2b7debd459e7262e843cc4e3722120f5359e" vendor/bin/test-reporter --stdout > codeclimate.json
+- "sh -c 'if [ \"$TRAVIS_PHP_VERSION\" != \"hhvm\" ]; then curl -X POST -d @codeclimate.json -H \"Content-Type: application/json\" -H \"User-Agent: Code Climate (PHP Test Reporter v0.1.1)\" https://codeclimate.com/test_reports  ; fi'"
