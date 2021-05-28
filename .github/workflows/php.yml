@@ -1,4 +1,4 @@
-name: Linter
+name: CI
 
 on:
   push:
@@ -19,14 +19,11 @@ jobs:
     - name: make_lint
       run: make lint
 
-    - name: make_test
-      run: make test
-
     - name: Run test & publish code coverage
       uses: paambaati/codeclimate-action@v2.6.0
       # Add Code Climate secret key
       env:
-        CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE }}
+        CC_TEST_REPORTER_ID: 8e34ef604009610b850cfc6a372c2b7debd459e7262e843cc4e3722120f5359e
       with:
         coverageCommand: make test-coverage
         coverageLocations: ${{github.workplace}}/build/logs/clover.xml:clover
