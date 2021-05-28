@@ -8,6 +8,7 @@ before_script:
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
 script:
+  - composer install
   - composer exec --verbose phpunit tests -- --coverage-clover build/logs/clover.xml
 after_script:
   - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
