@@ -23,7 +23,7 @@ jobs:
       run: echo $CODACY_PROJECT_TOKEN
 
     -- name: test2
-      run: echo CODACY_PROJECT_TOKEN
+       run: echo CODACY_PROJECT_TOKEN
 
     - name: Run test & publish code coverage
       uses: paambaati/codeclimate-action@v2.6.0
