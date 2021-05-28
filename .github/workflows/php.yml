@@ -22,7 +22,7 @@ jobs:
     - name: test
       run: echo $CODACY_PROJECT_TOKEN
 
-    -- name: test2
+    - name: test2
        run: echo CODACY_PROJECT_TOKEN
 
     - name: Run test & publish code coverage
