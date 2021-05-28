@@ -15,6 +15,12 @@ jobs:
 
     - name: composer_install
       run: composer install --dev
+    
+    - name: test1 
+      run: pecl install xdebug
+
+    - name: test2
+      run: php -ini
 
     - name: make_lint
       run: make lint
