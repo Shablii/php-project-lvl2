@@ -4,11 +4,11 @@ php:
   - 8.0.1
 
 before_script: 
-- "composer require codeclimate/php-test-reporter --dev"
-- "composer install"
+- composer update
+- composer install
 
 script: 
-- "phpunit --testsuite=unit --coverage-text --coverage-clover build/logs/clover.xml"
+- composer exec --verbose phpunit tests -- --coverage-clover build/logs/clover.xml
 
 after_script:
 - CODECLIMATE_REPO_TOKEN="8e34ef604009610b850cfc6a372c2b7debd459e7262e843cc4e3722120f5359e" vendor/bin/test-reporter --stdout > codeclimate.json
