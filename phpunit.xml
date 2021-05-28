@@ -11,6 +11,10 @@
          bootstrap="vendor/autoload.php" 
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
 
+  <php>
+        <ini name="xdebug.mode" value="coverage" />
+  </php>
+
   <coverage includeUncoveredFiles="true">
     <include>
       <directory suffix=".php">./src</directory>
