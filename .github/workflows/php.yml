@@ -18,9 +18,13 @@ jobs:
 
     - name: make_lint
       run: make lint
+    
+    - name: test
+      run: echo CODACY_PROJECT_TOKEN
 
     - name: Run test & publish code coverage
       uses: paambaati/codeclimate-action@v2.6.0
+      
       # Add Code Climate secret key
       env:
         CC_TEST_REPORTER_ID: ac5c43bd7e74410896d36d0ea8683eb3
