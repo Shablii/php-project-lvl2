@@ -16,11 +16,14 @@ jobs:
     - name: composer_install
       run: composer install --dev
     
-    - name: test1 
+    - name: install_xdebug 
       run: pecl install xdebug
 
+    - name: test1
+      run: php -ini | grep "Loaded Configuration File"
+
     - name: test2
-      run: php -ini
+      run: echo xdebug.mode = coverage >> /usr/local/etc/php/8.0/php.ini
 
     - name: make_lint
       run: make lint
@@ -32,6 +35,6 @@ jobs:
       env:
         CC_TEST_REPORTER_ID: 8e34ef604009610b850cfc6a372c2b7debd459e7262e843cc4e3722120f5359e
       with:
-        coverageCommand: XDEBUG_MODE=coverage composer exec --verbose phpunit tests -- --coverage-text
+        coverageCommand: composer exec --verbose phpunit tests -- --coverage-text
         coverageLocations: ${{github.workplace}}/build/logs/clover.xml:clover
         debug: true
