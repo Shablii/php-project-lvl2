@@ -19,9 +19,6 @@ jobs:
     - name: install_xdebug 
       run: pecl install xdebug
 
-    - name: test1
-      run: php -ini | grep "Loaded Configuration File"
-
     - name: test2
       run: echo xdebug.mode = coverage >> /usr/local/etc/php/8.0/php.ini
 
@@ -33,7 +30,7 @@ jobs:
       
       # Add Code Climate secret key
       env:
-        CC_TEST_REPORTER_ID: 8e34ef604009610b850cfc6a372c2b7debd459e7262e843cc4e3722120f5359e
+        CC_TEST_REPORTER_ID: ac5c43bd7e74410896d36d0ea8683eb3
       with:
         coverageCommand: composer exec --verbose phpunit tests -- --coverage-text
         coverageLocations: ${{github.workplace}}/build/logs/clover.xml:clover
