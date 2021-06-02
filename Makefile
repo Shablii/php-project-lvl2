@@ -3,7 +3,7 @@
 install:
 	composer install
 getdiff:
-	php bin/gendiff
+	./bin/gendiff
 validate:
 	composer validate
 lint:
