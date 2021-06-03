@@ -1,15 +1,12 @@
-# single test suite, non-parallel build.
-
 env:
   global:
-    - CC_TEST_REPORTER_ID=8e34ef604009610b850cfc6a372c2b7debd459e7262e843cc4e3722120f5359e
+    - CC_TEST_REPORTER_ID=${{ secrets.TRAVIS }}
 language: "php"
 
 php:
   - 8.0.1
 
 before_script:
-  - composer update
   - composer install
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter

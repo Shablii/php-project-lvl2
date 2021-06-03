@@ -2,7 +2,7 @@
 
 install:
 	composer install
-getdiff:
+gendiff:
 	./bin/gendiff
 validate:
 	composer validate
