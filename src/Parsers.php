@@ -7,13 +7,31 @@ use Symfony\Component\Yaml\Yaml;
 function parsers($file)
 {
     $typeFile = strpbrk($file, ".");
-    $parsFiles = $typeFile === ".json" ? json_decode(file_get_contents($file), true) : Yaml::parse(file_get_contents($file), Yaml::PARSE_OBJECT_FOR_MAP);
 
-    return collect($parsFiles)
-    ->map(function ($v, $k) {
-        if (is_bool($v)) {
-            $v = (true === $v) ? "true" : "false";
+    $parsFiles = $typeFile === ".json" ?
+        json_decode(file_get_contents($file), false) :
+        Yaml::parse(file_get_contents($file), Yaml::PARSE_OBJECT_FOR_MAP);
+
+    return boolToStr($parsFiles);
+}
+
+function boolToStr($files)
+{
+    $result = collect($files)
+    ->map(function ($item, $key) {
+        if (is_bool($item)) {
+            $item = (true === $item) ? "true" : "false";
         }
-        return $v;
+
+        if ($item === null) {
+            $item = "null";
+        }
+
+        if (is_object($item)) {
+            return boolToStr($item);
+        }
+
+        return $item;
     })->all();
+    return (object) $result;
 }

@@ -10,7 +10,8 @@
         "psr-4": {"App\\": "src/"},
         "files": [
             "src/genDiff.php",
-            "src/Parsers.php"
+            "src/Parsers.php",
+            "src/Stylish.php"
         ]
     },
     "description": "php-package-lv2",
