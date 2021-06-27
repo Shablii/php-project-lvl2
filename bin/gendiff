@@ -22,10 +22,9 @@ DOC;
 
 $result = Docopt::handle($doc, array('version' => '1'));
 
-
 $file1 = $result["<firstFile>"];
 $file2 = $result["<secondFile>"];
-
-if (is_file($file1) && is_file($file2)) {
-    print_r(genDiff($file1, $file2));
-}
+$format = $result["--format"];
+//if (is_file($file1) && is_file($file2)) {
+    print_r(genDiff($file1, $file2, $format));
+//}

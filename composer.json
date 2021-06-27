@@ -11,7 +11,9 @@
         "files": [
             "src/genDiff.php",
             "src/Parsers.php",
-            "src/Stylish.php"
+            "src/Formatters.php",
+            "Formatters/Stylish.php",
+            "Formatters/Plain.php"
         ]
     },
     "description": "php-package-lv2",

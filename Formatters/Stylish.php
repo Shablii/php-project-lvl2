@@ -1,6 +1,6 @@
 <?php
 
-namespace Differ\Stylish;
+namespace Differ\Formatters\Stylish;
 
 function stylish($ast)
 {
@@ -22,14 +22,14 @@ function formatter($sep, $node)
 {
     if ($node['type'] === "OBJECT") {
         if ($node['status'] === 'noChenged') {
-            $result = newSep($sep) . $node['key'] . ": " . $node['value1'];
+            $result = newSep($sep) . $node['key'] . ": " . displeyVal($node['value1']);
         } elseif ($node['status'] === "add") {
-            $result = newSep($sep, "+") . $node['key'] . ": " . $node['value2'];
+            $result = newSep($sep, "+") . $node['key'] . ": " . displeyVal($node['value2']);
         } elseif ($node['status'] === "del") {
-            $result = newSep($sep, "-") . $node['key'] . ": " . $node['value1'];
+            $result = newSep($sep, "-") . $node['key'] . ": " . displeyVal($node['value1']);
         } else {
-            $result[] = newSep($sep, "-") . $node['key'] . ": " . $node['value1'];
-            $result[] = newSep($sep, "+") . $node['key'] . ": " . $node['value2'];
+            $result[] = newSep($sep, "-") . $node['key'] . ": " . displeyVal($node['value1']);
+            $result[] = newSep($sep, "+") . $node['key'] . ": " . displeyVal($node['value2']);
         }
     }
 
@@ -100,4 +100,16 @@ function recursivMap($sep, $node)
 function newSep($sep, $value = " ")
 {
     return substr($sep, 0, strlen($sep) - 2) . $value . " ";
+}
+
+function displeyVal($val)
+{
+    if (is_bool($val)) {
+        $val = ($val === true) ? "true" : "false";
+    }
+
+    if ($val === null) {
+        $val = "null";
+    }
+    return $val;
 }
