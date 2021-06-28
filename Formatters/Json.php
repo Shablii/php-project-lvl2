@@ -2,14 +2,14 @@
 
 namespace Differ\Formatters\Json;
 
-function json($ast)
+function json($ast): string
 {
     $formatter = formatter($ast);
 
     return json_encode($formatter);
 }
 
-function formatter($ast)
+function formatter($ast): array
 {
     return collect($ast)
     ->reduce(function ($acc, $node) {

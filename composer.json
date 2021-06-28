@@ -9,7 +9,7 @@
     "autoload": {
         "psr-4": {"App\\": "src/"},
         "files": [
-            "src/genDiff.php",
+            "src/Differ.php",
             "src/Parsers.php",
             "src/Formatters.php",
             "Formatters/Stylish.php",

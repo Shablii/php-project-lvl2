@@ -2,7 +2,7 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
-use function Differ\GenDiff\genDiff;
+use function Differ\Differ\genDiff;
 use function Differ\Parsers\parsers;
 use PHPUnit\Framework\TestCase;
 
