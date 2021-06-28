@@ -11,7 +11,11 @@ function genDiff($file1, $file2, $format = 'stylish')
     $flow2 = parsers($file2);
 
     $ast = ast($flow1, $flow2);
-
+    var_dump('!!!!!!!!!!!!!!!!');
+    var_dump($flow1);
+    var_dump('!!!!!!!!!!!!!!!!');
+    var_dump($flow2);
+    var_dump('!!!!!!!!!!!!!!!!');
     return formatters($ast, $format);
 }
 
@@ -20,12 +24,12 @@ function ast($flow1, $flow2, $path = ""): object
     return collect($flow1)->merge($flow2)
     ->sortKeys()
     ->map(function ($node, $key) use ($flow1, $flow2, $path) {
-
+        //var_dump($flow1);
         $valueFlow1 = property_exists($flow1, $key) ? $flow1->$key : 'not exist';
         $valueFlow2 = property_exists($flow2, $key) ? $flow2->$key : 'not exist';
         $path .= $path == "" ? $key : "." . $key;
         if (is_object($node)) {
-            $status = getStatusArray($key, $flow1, $flow2);
+            $status = getStatusArray($flow1, $flow2, $key);
             $children = ($status === 'noChenged') ? ast($valueFlow1, $valueFlow2, $path) : $node;
             return [
                 'key' => $key,
@@ -41,14 +45,14 @@ function ast($flow1, $flow2, $path = ""): object
                 'type' => $type,
                 'value1' => $valueFlow1,
                 'value2' => $valueFlow2,
-                'status' => getStatusObject($key, $valueFlow1, $valueFlow2),
+                'status' => getStatusObject($valueFlow1, $valueFlow2),
                 'path' => $path
             ];
         }
     });
 }
 
-function getStatusArray($key, $flow1, $flow2): string
+function getStatusArray($flow1, $flow2, $key): string
 {
     $noChenged = (property_exists($flow1, $key) && property_exists($flow2, $key));
     $add = (!property_exists($flow1, $key) && property_exists($flow2, $key));
@@ -65,7 +69,7 @@ function getStatusArray($key, $flow1, $flow2): string
     return $result;
 }
 
-function getStatusObject($key, $flow1, $flow2): string
+function getStatusObject($flow1, $flow2): string
 {
     if ($flow1 === $flow2) {
         $result = "noChenged";

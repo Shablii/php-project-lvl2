@@ -4,7 +4,6 @@
 require __DIR__ . '/../vendor/autoload.php';
 
 use function Differ\Differ\genDiff;
-use Symfony\Component\Yaml\Yaml;
 
 $doc = <<<DOC
 Generate diff
@@ -25,6 +24,6 @@ $result = Docopt::handle($doc, array('version' => '1'));
 $file1 = $result["<firstFile>"];
 $file2 = $result["<secondFile>"];
 $format = $result["--format"];
-//if (is_file($file1) && is_file($file2)) {
-    print_r(genDiff($file1, $file2, $format));
-//}
+
+print_r(genDiff($file1, $file2, $format));
+
