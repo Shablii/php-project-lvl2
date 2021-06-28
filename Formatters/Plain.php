@@ -11,6 +11,9 @@ function formatterMap($ast)
 {
     return collect($ast)
     ->map(function ($node) {
+        if ($node['type'] === "OBJECT" && $node['status'] === 'noChenged') {
+            return;
+        }
         return formatter($node);
     })
     ->flatten()
@@ -36,37 +39,44 @@ function displeyVal($val)
 function formatter($node)
 {
     if ($node['type'] === "OBJECT") {
-        if ($node['status'] === "add") {
-            $result = "Property '{$node['path']}' was added with value: " . displeyVal($node['value2']);
-        } elseif ($node['status'] === "del") {
-            $result = "Property '{$node['path']}' was removed";
-        } elseif ($node['status'] === "chenged") {
-            $result = "Property '{$node['path']}' was updated. From "
-            . displeyVal($node['value1']) . " to " . displeyVal($node['value2']);
-        } else {
-            $result = "";
+        switch ($node['status']) {
+            case 'noChenged':
+                return;
+            case 'added':
+                $result = "Property '{$node['path']}' was added with value: " . displeyVal($node['value2']);
+                break;
+            case 'removed':
+                $result = "Property '{$node['path']}' was removed";
+                break;
+            case 'updated':
+                $result = "Property '{$node['path']}' was updated. From "
+                . displeyVal($node['value1']) . " to " . displeyVal($node['value2']);
+                break;
+            default:
+                throw new \Exception("unknown status: " . $node['status'] . " for OBJECT in Plain format");
         }
     }
 
     if ($node['type'] === "ARRAY") {
-        if ($node['status'] === 'noChenged') {
-            return formatterMap($node['children']);
-        }
-        if ($node['status'] === "add") {
-            $result = "Property '{$node['path']}' was added with value: [complex value]";
-        } elseif ($node['status'] === "del") {
-            $result = "Property '{$node['path']}' was removed";
+        switch ($node['status']) {
+            case 'noChenged':
+                $result = formatterMap($node['children']);
+                break;
+            case 'added':
+                $result = $result = "Property '{$node['path']}' was added with value: [complex value]";
+                break;
+            case 'removed':
+                $result = "Property '{$node['path']}' was removed";
+                break;
+            default:
+                throw new \Exception("unknown status: " . $node['status'] . " for ARRAY in Plain format");
         }
     }
 
     if ($node['type'] === "ARRAY/OBJECT") {
-        if (is_object($node['value1'])) {
-            $result = "Property '{$node['path']}' was updated. From [complex value] to " . displeyVal($node['value2']);
-        } else {
-            $$result = "Property '{$node['path']}' was updated. From " . displeyVal($node['value1'])
-            . " to [complex value]";
-        }
+        $result = (is_object($node['value1']))
+        ? "Property '{$node['path']}' was updated. From [complex value] to " . displeyVal($node['value2'])
+        : "Property '{$node['path']}' was updated. From " . displeyVal($node['value1']) . " to [complex value]";
     }
-
     return $result;
 }

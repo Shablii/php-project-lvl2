@@ -57,9 +57,9 @@ function getStatusArray($key, $flow1, $flow2)
     if ($noChenged) {
         $result = "noChenged";
     } elseif ($add) {
-        $result = "add";
+        $result = "added";
     } elseif ($del) {
-        $result = "del";
+        $result = "removed";
     }
 
     return $result;
@@ -70,11 +70,11 @@ function getStatusObject($key, $flow1, $flow2)
     if ($flow1 === $flow2) {
         $result = "noChenged";
     } elseif ($flow1 === "not exist" && $flow2 !== "not exist") {
-        $result = "add";
+        $result = "added";
     } elseif ($flow1 !== "not exist" && $flow2 === "not exist") {
-        $result = "del";
+        $result = "removed";
     } else {
-        $result = "chenged";
+        $result = "updated";
     }
 
     return $result;

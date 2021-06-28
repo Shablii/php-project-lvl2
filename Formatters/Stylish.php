@@ -21,43 +21,54 @@ function formatterMap($ast, $sep = '')
 function formatter($sep, $node)
 {
     if ($node['type'] === "OBJECT") {
-        if ($node['status'] === 'noChenged') {
-            $result = newSep($sep) . $node['key'] . ": " . displeyVal($node['value1']);
-        } elseif ($node['status'] === "add") {
-            $result = newSep($sep, "+") . $node['key'] . ": " . displeyVal($node['value2']);
-        } elseif ($node['status'] === "del") {
-            $result = newSep($sep, "-") . $node['key'] . ": " . displeyVal($node['value1']);
-        } else {
-            $result[] = newSep($sep, "-") . $node['key'] . ": " . displeyVal($node['value1']);
-            $result[] = newSep($sep, "+") . $node['key'] . ": " . displeyVal($node['value2']);
+        switch ($node['status']) {
+            case 'noChenged':
+                $result = newSep($sep) . $node['key'] . ": " . displeyVal($node['value1']);
+                break;
+            case 'added':
+                $result = newSep($sep, "+") . $node['key'] . ": " . displeyVal($node['value2']);
+                break;
+            case 'removed':
+                $result = newSep($sep, "-") . $node['key'] . ": " . displeyVal($node['value1']);
+                break;
+            case 'updated':
+                $result[] = newSep($sep, "-") . $node['key'] . ": " . displeyVal($node['value1']);
+                $result[] = newSep($sep, "+") . $node['key'] . ": " . displeyVal($node['value2']);
+                break;
+            default:
+                throw new \Exception("unknown status: " . $node['status'] . " for OBJECT in Stylish format");
         }
     }
 
     if ($node['type'] === "ARRAY") {
-        if ($node['status'] === 'noChenged') {
-            $children = formatterMap($node['children'], $sep);
-        } else {
-            $children = recursivMap($sep, $node['children']);
-        }
-
-        if ($node['status'] === "add") {
-            $result = [
-                newSep($sep, "+") . $node['key'] . ": {",
-                $children,
-                $sep . "}"
-            ];
-        } elseif ($node['status'] === "del") {
-            $result = [
-                newSep($sep, "-") . $node['key'] . ": {",
-                $children,
-                $sep . "}"
-            ];
-        } elseif ($node['status'] === "noChenged") {
-            $result = [
-                newSep($sep) . $node['key'] . ": {",
-                $children,
-                $sep . "}"
-            ];
+        switch ($node['status']) {
+            case 'noChenged':
+                $result = [
+                    newSep($sep) . $node['key'] . ": {",
+                    formatterMap($node['children'], $sep),
+                    $sep . "}"
+                ];
+                break;
+            case 'added':
+                $result = [
+                    newSep($sep, "+") . $node['key'] . ": {",
+                    recursivMap($sep, $node['children']),
+                    $sep . "}"
+                ];
+                break;
+            case 'removed':
+                $result = [
+                    newSep($sep, "-") . $node['key'] . ": {",
+                    recursivMap($sep, $node['children']),
+                    $sep . "}"
+                ];
+                break;
+            case 'updated':
+                $result[] = newSep($sep, "-") . $node['key'] . ": " . displeyVal($node['value1']);
+                $result[] = newSep($sep, "+") . $node['key'] . ": " . displeyVal($node['value2']);
+                break;
+            default:
+                throw new \Exception("unknown status: " . $node['status'] . " for ARRAY in Stylish format");
         }
     }
 
