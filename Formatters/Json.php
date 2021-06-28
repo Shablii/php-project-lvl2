@@ -9,7 +9,7 @@ function json($ast)
     return json_encode($formatter);
 }
 
-function formatter($ast, $result = [])
+function formatter($ast)
 {
     return collect($ast)
     ->reduce(function ($acc, $node) {
@@ -54,7 +54,9 @@ function formatter($ast, $result = [])
             if (is_object($node['value1'])) {
                 $acc["- " . $node['key']] = $node['value1'];
                 $acc["+ " . $node['key']] = $node['value2'];
-            } else {
+            }
+
+            if (is_object($node['value2'])) {
                 $acc["- " . $node['key']] = $node['value2'];
                 $acc["+ " . $node['key']] = $node['value1'];
             }

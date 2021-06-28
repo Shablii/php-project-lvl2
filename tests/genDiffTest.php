@@ -94,7 +94,6 @@ class genDiffTest extends TestCase
         $fileJson = __DIR__ . "/fixtures/json.json";
         $expectant = file_get_contents($fileJson);
 
-
         $file1 = __DIR__ . "/fixtures/file1.json";
         $file2 = __DIR__ . "/fixtures/file2.json";
         $this->assertEquals($expectant, genDiff($file1, $file2, "json"));

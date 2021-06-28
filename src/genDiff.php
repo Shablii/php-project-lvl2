@@ -15,7 +15,7 @@ function genDiff($file1, $file2, $format = 'stylish')
     return formatters($ast, $format);
 }
 
-function ast($flow1, $flow2, $path = "")
+function ast($flow1, $flow2, $path = ""): object
 {
     return collect($flow1)->merge($flow2)
     ->sortKeys()
@@ -48,7 +48,7 @@ function ast($flow1, $flow2, $path = "")
     });
 }
 
-function getStatusArray($key, $flow1, $flow2)
+function getStatusArray($key, $flow1, $flow2): string
 {
     $noChenged = (property_exists($flow1, $key) && property_exists($flow2, $key));
     $add = (!property_exists($flow1, $key) && property_exists($flow2, $key));
@@ -65,7 +65,7 @@ function getStatusArray($key, $flow1, $flow2)
     return $result;
 }
 
-function getStatusObject($key, $flow1, $flow2)
+function getStatusObject($key, $flow1, $flow2): string
 {
     if ($flow1 === $flow2) {
         $result = "noChenged";

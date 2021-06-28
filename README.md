@@ -4,7 +4,6 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/0898d8472c324dee2c9c/maintainability)](https://codeclimate.com/github/Shablii/php-project-lvl2/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/0898d8472c324dee2c9c/test_coverage)](https://codeclimate.com/github/Shablii/php-project-lvl2/test_coverage)
 
-
 ## Поиск различий между двумя плоскими json
 [![asciicast](https://asciinema.org/a/Vq0HcN51HF8dDaDy7u7RSUfiT.svg)](https://asciinema.org/a/Vq0HcN51HF8dDaDy7u7RSUfiT)
 
