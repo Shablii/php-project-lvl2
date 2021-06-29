@@ -12,7 +12,7 @@ function formatter($ast, $sep = ''): array
     $sep .= "    ";
     return collect($ast)
     ->map(function ($node) use ($sep) {
-
+        var_dump($node);
         switch ($node['type']) {
             case 'OBJECT':
                 $result = getObjectFormat($node, $sep);

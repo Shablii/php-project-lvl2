@@ -9,7 +9,8 @@ function genDiff($file1, $file2, $format = 'stylish'): string
 {
     $flow1 = parsers($file1);
     $flow2 = parsers($file2);
-
+    var_dump($flow1);
+    var_dump($flow2);
     $ast = ast($flow1, $flow2);
     return formatters($ast, $format);
 }
