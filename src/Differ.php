@@ -11,9 +11,9 @@ function genDiff($file1, $file2, $format = 'stylish'): string
     $flow2 = parsers($file2);
 
     var_dump("!!!!!!!!!!!!!!!");
-    print_r($flow1);
+    var_dump($flow1);
     var_dump("!!!!!!!!!!!!!!!");
-    print_r($flow2);
+    var_dump($flow2);
     var_dump("!!!!!!!!!!!!!!!");
     $ast = ast($flow1, $flow2);
     return formatters($ast, $format);
