@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 class genDiffTest extends TestCase
 {
 
-    public function testgenDiff(): void
+    public function testGenDiff(): void
     {
       $expectant = <<<DOC
       {
@@ -67,8 +67,7 @@ class genDiffTest extends TestCase
         $this->assertEquals($expectant, genDiff($file1, $file2));
     }
 
-
-    public function testgenDiffPlain(): void
+    public function testGenDiffPlain(): void
     {
         $expectant = <<<DOC
         Property 'common.follow' was added with value: false
@@ -89,7 +88,7 @@ class genDiffTest extends TestCase
         $this->assertEquals($expectant, genDiff($file1, $file2, "plain"));
     }
 
-    public function testgenDiffJson(): void
+    public function testGenDiffJson(): void
     {
         $fileJson = __DIR__ . "/fixtures/json.json";
         $expectant = file_get_contents($fileJson);

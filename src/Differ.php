@@ -5,17 +5,12 @@ namespace Differ\Differ;
 use function Differ\Parsers\parsers;
 use function Differ\Formatters\formatters;
 
-function genDiff($file1, $file2, $format = 'stylish')
+function genDiff($file1, $file2, $format = 'stylish'): string
 {
     $flow1 = parsers($file1);
     $flow2 = parsers($file2);
 
     $ast = ast($flow1, $flow2);
-    var_dump('!!!!!!!!!!!!!!!!');
-    var_dump($flow1);
-    var_dump('!!!!!!!!!!!!!!!!');
-    var_dump($flow2);
-    var_dump('!!!!!!!!!!!!!!!!');
     return formatters($ast, $format);
 }
 
@@ -24,13 +19,14 @@ function ast($flow1, $flow2, $path = ""): object
     return collect($flow1)->merge($flow2)
     ->sortKeys()
     ->map(function ($node, $key) use ($flow1, $flow2, $path) {
-        //var_dump($flow1);
         $valueFlow1 = property_exists($flow1, $key) ? $flow1->$key : 'not exist';
         $valueFlow2 = property_exists($flow2, $key) ? $flow2->$key : 'not exist';
+
         $path .= $path == "" ? $key : "." . $key;
         if (is_object($node)) {
             $status = getStatusArray($flow1, $flow2, $key);
-            $children = ($status === 'noChenged') ? ast($valueFlow1, $valueFlow2, $path) : $node;
+            $children = (is_object($valueFlow1) && is_object($valueFlow2))
+            ? ast($valueFlow1, $valueFlow2, $path) : $node;
             return [
                 'key' => $key,
                 'type' => "ARRAY",
@@ -55,14 +51,14 @@ function ast($flow1, $flow2, $path = ""): object
 function getStatusArray($flow1, $flow2, $key): string
 {
     $noChenged = (property_exists($flow1, $key) && property_exists($flow2, $key));
-    $add = (!property_exists($flow1, $key) && property_exists($flow2, $key));
-    $del = (property_exists($flow1, $key) && !property_exists($flow2, $key));
+    $added = (!property_exists($flow1, $key) && property_exists($flow2, $key));
+    $removed = (property_exists($flow1, $key) && !property_exists($flow2, $key));
 
     if ($noChenged) {
         $result = "noChenged";
-    } elseif ($add) {
+    } elseif ($added) {
         $result = "added";
-    } elseif ($del) {
+    } elseif ($removed) {
         $result = "removed";
     }
 
@@ -77,9 +73,8 @@ function getStatusObject($flow1, $flow2): string
         $result = "added";
     } elseif ($flow1 !== "not exist" && $flow2 === "not exist") {
         $result = "removed";
-    } else {
+    } elseif ($flow1 !== "not exist" && $flow2 !== "not exist") {
         $result = "updated";
     }
-
     return $result;
 }
