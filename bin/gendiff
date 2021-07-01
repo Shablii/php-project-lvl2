@@ -25,5 +25,7 @@ $file1 = $result["<firstFile>"];
 $file2 = $result["<secondFile>"];
 $format = $result["--format"];
 
+//var_dump($result["<firstFile>"]);
+//print_r($format);
 print_r(genDiff($file1, $file2, $format));
 

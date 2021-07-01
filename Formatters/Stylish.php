@@ -35,13 +35,13 @@ function getArray($sep, $node, $status)
         ];
 }
 
-function getObject($sep, $node, $status = ' ')
+function getObject($sep, $node, $status = ' '): string
 {
     $val = $status === "+" || $status === " " ? $node['newValue'] : $node['oldValue'];
     return newSep($sep, $status) . $node['key'] . ": " . displeyValue($val);
 }
 
-function getObjectFormat($node, $sep)
+function getObjectFormat($node, $sep): array
 {
     switch ($node['status']) {
         case 'noChenged':
@@ -94,7 +94,7 @@ function newSep($sep, $value = " "): string
     return substr($sep, 0, strlen($sep) - 2) . $value . " ";
 }
 
-function displeyValue($val, $sep = "")
+function displeyValue($val, $sep = ""): string
 {
     if (is_bool($val)) {
         $val = ($val === true) ? "true" : "false";
