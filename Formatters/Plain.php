@@ -48,6 +48,8 @@ function displeyVal($val): string
 {
     if (is_bool($val)) {
         return ($val === true) ? "true" : "false";
+    } elseif (is_numeric($val)) {
+        return $val;
     } elseif ($val === null) {
         return "null";
     } elseif (is_object($val)) {

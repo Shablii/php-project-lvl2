@@ -11,8 +11,7 @@ function genDiff($file1, $file2, $format = 'stylish'): string
     $newData = parsers($file2);
 
     $ast = ast($oldData, $newData);
-    //print_r($ast);
-    print_r(formatters($ast, $format));
+
     return formatters($ast, $format);
 }
 
