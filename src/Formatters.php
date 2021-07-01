@@ -6,7 +6,7 @@ use function Differ\Formatters\Stylish\stylish;
 use function Differ\Formatters\Plain\plain;
 use function Differ\Formatters\Json\json;
 
-function formatters($ast, $format): string
+function formatters($ast, $format)
 {
     switch ($format) {
         case 'stylish':

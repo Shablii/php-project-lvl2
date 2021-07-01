@@ -6,6 +6,7 @@ use Symfony\Component\Yaml\Yaml;
 
 function parsers($file): object
 {
+    //var_dump(file_get_contents($file));
     $typeFile = strpbrk($file, ".");
 
     $parsFiles = $typeFile === ".json" ?

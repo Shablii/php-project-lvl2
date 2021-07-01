@@ -12,101 +12,63 @@ function formatter($ast, $sep = ''): array
     $sep .= "    ";
     return collect($ast)
     ->map(function ($node) use ($sep) {
-        //var_dump($node);
-        switch ($node['type']) {
-            case 'OBJECT':
-                $result = getObjectFormat($node, $sep);
-                break;
-            case 'ARRAY':
-                $result = getArrayFormat($node, $sep);
-                break;
-            case 'ARRAY/OBJECT':
-                $result = getArrayObjectFormat($node, $sep);
-                break;
-            default:
-                throw new \Exception("unknown type: " . $node['type'] . " for AST in Stylish formatter");
+        if (array_key_exists("type", $node)) {
+            return [
+                newSep($sep) . $node['key'] . ": {",
+                formatter($node['children'], $sep),
+                $sep . "}"
+                ];
         }
-
-        return $result;
+        return getObjectFormat($node, $sep);
     })
     ->flatten()
     ->all();
 }
 
-function getObjectFormat($node, $sep): array
+function getArray($sep, $node, $status)
+{
+    $val = $status === "+" || $status === " " ? $node['newValue'] : $node['oldValue'];
+    return [
+        newSep($sep, $status) . $node['key'] . ": {",
+        recursivMap($sep, $val),
+        $sep . "}"
+        ];
+}
+
+function getObject($sep, $node, $status = ' ')
+{
+    $val = $status === "+" || $status === " " ? $node['newValue'] : $node['oldValue'];
+    return newSep($sep, $status) . $node['key'] . ": " . displeyValue($val);
+}
+
+function getObjectFormat($node, $sep)
 {
     switch ($node['status']) {
         case 'noChenged':
-            $result[] = newSep($sep) . $node['key'] . ": " . displeyValue($node['value1']);
+            $result[] = is_object($node['newValue'])
+            ? getArray($sep, $node)
+            : getObject($sep, $node);
             break;
         case 'added':
-            $result[] = newSep($sep, "+") . $node['key'] . ": " . displeyValue($node['value2']);
+            $result[] = is_object($node['newValue'])
+            ? getArray($sep, $node, "+")
+            : getObject($sep, $node, '+');
             break;
         case 'removed':
-            $result[] = newSep($sep, "-") . $node['key'] . ": " . displeyValue($node['value1']);
+            $result[] = is_object($node['oldValue'])
+            ? getArray($sep, $node, "-")
+            : getObject($sep, $node, '-');
             break;
         case 'updated':
-            $result[] = newSep($sep, "-") . $node['key'] . ": " . displeyValue($node['value1']);
-            $result[] = newSep($sep, "+") . $node['key'] . ": " . displeyValue($node['value2']);
+            $result[] = is_object($node['oldValue'])
+            ? getArray($sep, $node, "-")
+            : getObject($sep, $node, '-');
+            $result[] = is_object($node['newValue'])
+            ? getArray($sep, $node, "+")
+            : getObject($sep, $node, '+');
             break;
         default:
             throw new \Exception("unknown status: " . $node['status'] . " for OBJECT in Stylish format");
-    }
-    return $result;
-}
-
-function getArrayFormat($node, $sep): array
-{
-    switch ($node['status']) {
-        case 'noChenged':
-            $result = [
-                newSep($sep) . $node['key'] . ": {",
-                formatter($node['children'], $sep),
-                $sep . "}"
-            ];
-            break;
-        case 'added':
-            $result = [
-                newSep($sep, "+") . $node['key'] . ": {",
-                recursivMap($sep, $node['children']),
-                $sep . "}"
-            ];
-            break;
-        case 'removed':
-            $result = [
-                newSep($sep, "-") . $node['key'] . ": {",
-                recursivMap($sep, $node['children']),
-                $sep . "}"
-            ];
-            break;
-        case 'updated':
-            $result[] = newSep($sep, "-") . $node['key'] . ": " . displeyValue($node['value1']);
-            $result[] = newSep($sep, "+") . $node['key'] . ": " . displeyValue($node['value2']);
-            break;
-        default:
-            throw new \Exception("unknown status: " . $node['status'] . " for ARRAY in Stylish format");
-    }
-    return $result;
-}
-
-function getArrayObjectFormat($node, $sep): array
-{
-    if (is_object($node['value1'])) {
-        $result = [
-            newSep($sep, "-") . $node['key'] . ": {",
-            recursivMap($sep, $node['value1']),
-            $sep . "}"
-        ];
-        $result[] = newSep($sep, "+") . $node['key'] . ": " . $node['value2'];
-    }
-
-    if (is_object($node['value2'])) {
-        $result = [
-            newSep($sep, "+") . $node['key'] . ": {",
-            recursivMap($sep, $node['value2']),
-            $sep . "}"
-        ];
-        $result[] = newSep($sep, "-") . $node['key'] . ": " . $node['value1'];
     }
     return $result;
 }
@@ -132,7 +94,7 @@ function newSep($sep, $value = " "): string
     return substr($sep, 0, strlen($sep) - 2) . $value . " ";
 }
 
-function displeyValue($val): string
+function displeyValue($val, $sep = "")
 {
     if (is_bool($val)) {
         $val = ($val === true) ? "true" : "false";
@@ -141,5 +103,6 @@ function displeyValue($val): string
     if ($val === null) {
         $val = "null";
     }
+
     return $val;
 }

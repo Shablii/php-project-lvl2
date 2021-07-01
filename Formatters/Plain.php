@@ -11,19 +11,10 @@ function formatter($ast): array
 {
     return collect($ast)
     ->map(function ($node) {
-        if ($node['type'] === "OBJECT" && $node['status'] === 'noChenged') {
-            return;
+        if (array_key_exists("type", $node)) {
+            return formatter($node['children']);
         }
-        switch ($node['type']) {
-            case 'OBJECT':
-                return getObjectFormat($node);
-            case 'ARRAY':
-                return getArrayFormat($node);
-            case 'ARRAY/OBJECT':
-                return getArrayObjectFormat($node);
-            default:
-                throw new \Exception("unknown type: " . $node['type'] . " for AST in Plain formatter");
-        }
+        return getObjectFormat($node);
     })
     ->flatten()
     ->reject(function ($name) {
@@ -32,31 +23,20 @@ function formatter($ast): array
     ->all();
 }
 
-function displeyVal($val): string
-{
-    if (is_bool($val)) {
-        return ($val === true) ? "true" : "false";
-    } elseif ($val === null) {
-        return "null";
-    }
-
-    return "'$val'";
-}
-
 function getObjectFormat($node): array
 {
     switch ($node['status']) {
         case 'noChenged':
             return [];
         case 'added':
-            $result[] = "Property '{$node['path']}' was added with value: " . displeyVal($node['value2']);
+            $result[] = "Property '{$node['path']}' was added with value: " . displeyVal($node['newValue']);
             break;
         case 'removed':
             $result[] = "Property '{$node['path']}' was removed";
             break;
         case 'updated':
             $result[] = "Property '{$node['path']}' was updated. From "
-            . displeyVal($node['value1']) . " to " . displeyVal($node['value2']);
+            . displeyVal($node['oldValue']) . " to " . displeyVal($node['newValue']);
             break;
         default:
             throw new \Exception("unknown status: " . $node['status'] . " for OBJECT in Plain format");
@@ -64,27 +44,15 @@ function getObjectFormat($node): array
     return $result;
 }
 
-function getArrayFormat($node): array
+function displeyVal($val): string
 {
-    switch ($node['status']) {
-        case 'noChenged':
-            $result[] = formatter($node['children']);
-            break;
-        case 'added':
-            $result[] = "Property '{$node['path']}' was added with value: [complex value]";
-            break;
-        case 'removed':
-            $result[] = "Property '{$node['path']}' was removed";
-            break;
-        default:
-            throw new \Exception("unknown status: " . $node['status'] . " for ARRAY in Plain format");
+    if (is_bool($val)) {
+        return ($val === true) ? "true" : "false";
+    } elseif ($val === null) {
+        return "null";
+    } elseif (is_object($val)) {
+        return '[complex value]';
     }
-    return $result;
-}
 
-function getArrayObjectFormat($node): string
-{
-    return (is_object($node['value1']))
-    ? "Property '{$node['path']}' was updated. From [complex value] to " . displeyVal($node['value2'])
-    : "Property '{$node['path']}' was updated. From " . displeyVal($node['value1']) . " to [complex value]";
+    return "'$val'";
 }
