@@ -1,61 +1,61 @@
 <?php
 
-require __DIR__ . '/../vendor/autoload.php';
+namespace Gendiff\Tests;
 
-use function Differ\Differ\genDiff;
-use function Differ\Parsers\parsers;
 use PHPUnit\Framework\TestCase;
 
-class genDiffTest extends TestCase
+use function Differ\Differ\genDiff;
+
+class GenDiffTest extends TestCase
 {
     public function testGenDiff(): void
     {
-      $expectant = <<<DOC
-      {
-          common: {
-            + follow: false
-              setting1: Value 1
-            - setting2: 200
-            - setting3: true
-            + setting3: null
-            + setting4: blah blah
-            + setting5: {
-                  key5: value5
-              }
-              setting6: {
-                  doge: {
-                    - wow: 
-                    + wow: so much
-                  }
-                  key: value
-                + ops: vops
-              }
-          }
-          group1: {
-            - baz: bas
-            + baz: bars
-              foo: bar
-            - nest: {
-                  key: value
-              }
-            + nest: str
-          }
-        - group2: {
-              abc: 12345
-              deep: {
-                  id: 45
-              }
-          }
-        + group3: {
-              deep: {
-                  id: {
-                      number: 45
-                  }
-              }
-              fee: 100500
-          }
-      }
-      DOC;
+        $expectant = <<<DOC
+        {
+            common: {
+              + follow: false
+                setting1: Value 1
+              - setting2: 200
+              - setting3: true
+              + setting3: null
+              + setting4: blah blah
+              + setting5: {
+                    key5: value5
+                }
+                setting6: {
+                    doge: {
+                      - wow: 
+                      + wow: so much
+                    }
+                    key: value
+                  + ops: vops
+                }
+            }
+            group1: {
+              - baz: bas
+              + baz: bars
+                foo: bar
+              - nest: {
+                    key: value
+                }
+              + nest: str
+            }
+          - group2: {
+                abc: 12345
+                deep: {
+                    id: 45
+                }
+            }
+          + group3: {
+                deep: {
+                    id: {
+                        number: 45
+                    }
+                }
+                fee: 100500
+            }
+        }
+        DOC;
 
         $file1 = __DIR__ . "/fixtures/file1.yaml";
         $file2 = __DIR__ . "/fixtures/file2.yaml";
@@ -64,7 +64,7 @@ class genDiffTest extends TestCase
 
     public function testGenDiffStylish(): void
     {
-        $expectant =<<<DOC
+        $expectant = <<<DOC
         {
             common: {
               + follow: false
@@ -155,7 +155,7 @@ class genDiffTest extends TestCase
         $file2 = __DIR__ . "/fixtures/file2.yaml";
         $this->assertEquals($expectant, genDiff($file1, $file2, "plain"));
     }
-    
+
     public function testGenDiffJson(): void
     {
         $fileJson = __DIR__ . "/fixtures/json.json";

@@ -10,7 +10,10 @@
         "bin/gendiff"
     ],
     "autoload": {
-        "psr-4": {"App\\": "src/"},
+        "psr-4": {
+            "Gendiff\\": "src",
+            "Gendiff\\Tests\\": "tests"
+        },
         "files": [
             "src/Differ.php",
             "src/Parsers.php",
