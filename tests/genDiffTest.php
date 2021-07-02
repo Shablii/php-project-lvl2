@@ -8,7 +8,6 @@ use PHPUnit\Framework\TestCase;
 
 class genDiffTest extends TestCase
 {
- /*
     public function testGenDiff(): void
     {
       $expectant = <<<DOC
@@ -156,7 +155,7 @@ class genDiffTest extends TestCase
         $file2 = __DIR__ . "/fixtures/file2.yaml";
         $this->assertEquals($expectant, genDiff($file1, $file2, "plain"));
     }
-    */
+    
     public function testGenDiffJson(): void
     {
         $fileJson = __DIR__ . "/fixtures/json.json";

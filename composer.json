@@ -6,6 +6,9 @@
             "email": "mefistovad@gmail.com"
         }
     ],
+    "bin": [
+        "bin/gendiff"
+    ],
     "autoload": {
         "psr-4": {"App\\": "src/"},
         "files": [
