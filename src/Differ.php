@@ -5,14 +5,25 @@ namespace Differ\Differ;
 use function Differ\Parsers\parsers;
 use function Differ\Formatters\formatters;
 
-function genDiff(string $file1, string $file2, string $format = 'stylish'): string
+function genDiff(string $firstFile, string $secondFile, string $format = 'stylish'): string
 {
-    $oldData = parsers($file1);
-    $newData = parsers($file2);
+
+    [$contentFirstFile, $typeFirstFile] = fileParser($firstFile);
+    [$contentSecondFile, $typeSecondFile] = fileParser($secondFile);
+
+    $oldData = parsers($contentFirstFile, $typeFirstFile);
+    $newData = parsers($contentSecondFile, $typeSecondFile);
 
     $ast = ast($oldData, $newData);
 
     return formatters($ast, $format);
+}
+
+function fileParser(string $file)
+{
+    $content = file_get_contents($file);
+    $type = strpbrk($file, ".");
+    return [$content, $type];
 }
 
 function ast(object $oldData, object $newData, string $path = ""): object
