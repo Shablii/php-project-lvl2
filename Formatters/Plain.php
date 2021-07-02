@@ -2,12 +2,12 @@
 
 namespace Differ\Formatters\Plain;
 
-function plain($ast): string
+function plain(object $ast): string
 {
     return implode("\n", formatter($ast));
 }
 
-function formatter($ast): array
+function formatter(object $ast): array
 {
     return collect($ast)
     ->map(function ($node) {
@@ -23,38 +23,34 @@ function formatter($ast): array
     ->all();
 }
 
-function getObjectFormat($node): array
+function getObjectFormat(array $node): array
 {
     switch ($node['status']) {
         case 'noChenged':
             return [];
         case 'added':
-            $result[] = "Property '{$node['path']}' was added with value: " . displeyVal($node['newValue']);
-            break;
+            return ["Property '{$node['path']}' was added with value: " . displeyVal($node['newValue'])];
         case 'removed':
-            $result[] = "Property '{$node['path']}' was removed";
-            break;
+            return ["Property '{$node['path']}' was removed"];
         case 'updated':
-            $result[] = "Property '{$node['path']}' was updated. From "
-            . displeyVal($node['oldValue']) . " to " . displeyVal($node['newValue']);
-            break;
+            return ["Property '{$node['path']}' was updated. From "
+            . displeyVal($node['oldValue']) . " to " . displeyVal($node['newValue'])];
         default:
             throw new \Exception("unknown status: " . $node['status'] . " for OBJECT in Plain format");
     }
-    return $result;
 }
 
-function displeyVal($val): string
+function displeyVal($value): string
 {
-    if (is_bool($val)) {
-        return ($val === true) ? "true" : "false";
-    } elseif (is_numeric($val)) {
-        return $val;
-    } elseif ($val === null) {
+    if (is_bool($value)) {
+        return ($value === true) ? "true" : "false";
+    } elseif (is_numeric($value)) {
+        return $value;
+    } elseif ($value === null) {
         return "null";
-    } elseif (is_object($val)) {
+    } elseif (is_object($value)) {
         return '[complex value]';
     }
 
-    return "'$val'";
+    return "'$value'";
 }

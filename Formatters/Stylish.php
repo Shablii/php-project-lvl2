@@ -2,12 +2,12 @@
 
 namespace Differ\Formatters\Stylish;
 
-function stylish($ast): string
+function stylish(object $ast): string
 {
     return "{\n" . implode("\n", formatter($ast)) . "\n}";
 }
 
-function formatter($ast, $sep = ''): array
+function formatter(object $ast, string $sep = ''): array
 {
     $sep .= "    ";
     return collect($ast)
@@ -25,7 +25,7 @@ function formatter($ast, $sep = ''): array
     ->all();
 }
 
-function getArray($sep, $node, $status)
+function getArray(string $sep, array $node, string $status)
 {
     $val = $status === "+" || $status === " " ? $node['newValue'] : $node['oldValue'];
     return [
@@ -35,13 +35,13 @@ function getArray($sep, $node, $status)
         ];
 }
 
-function getObject($sep, $node, $status = ' '): string
+function getObject(string $sep, array $node, string $status = ' '): string
 {
     $val = $status === "+" || $status === " " ? $node['newValue'] : $node['oldValue'];
     return newSep($sep, $status) . $node['key'] . ": " . displeyValue($val);
 }
 
-function getObjectFormat($node, $sep): array
+function getObjectFormat($node, string $sep): array
 {
     switch ($node['status']) {
         case 'noChenged':
@@ -73,7 +73,7 @@ function getObjectFormat($node, $sep): array
     return $result;
 }
 
-function recursivMap($sep, $node): object
+function recursivMap(string $sep, object $node): object
 {
     $sep .= "    ";
     return collect($node)
@@ -89,12 +89,12 @@ function recursivMap($sep, $node): object
     });
 }
 
-function newSep($sep, $value = " "): string
+function newSep(string $sep, string $value = " "): string
 {
     return substr($sep, 0, strlen($sep) - 2) . $value . " ";
 }
 
-function displeyValue($val, $sep = ""): string
+function displeyValue($val): string
 {
     if (is_bool($val)) {
         $val = ($val === true) ? "true" : "false";

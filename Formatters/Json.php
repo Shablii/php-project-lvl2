@@ -2,8 +2,7 @@
 
 namespace Differ\Formatters\Json;
 
-function json($ast): string
+function json(object $ast): string
 {
-    return collect($ast)
-    ->toJson();
+    return collect($ast)->toJson();
 }

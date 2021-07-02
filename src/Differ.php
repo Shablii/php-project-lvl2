@@ -5,7 +5,7 @@ namespace Differ\Differ;
 use function Differ\Parsers\parsers;
 use function Differ\Formatters\formatters;
 
-function genDiff($file1, $file2, $format = 'stylish'): string
+function genDiff(string $file1, string $file2, string $format = 'stylish'): string
 {
     $oldData = parsers($file1);
     $newData = parsers($file2);
@@ -15,7 +15,7 @@ function genDiff($file1, $file2, $format = 'stylish'): string
     return formatters($ast, $format);
 }
 
-function ast($oldData, $newData, $path = ""): object
+function ast(object $oldData, object $newData, string $path = ""): object
 {
     return collect($oldData)->merge($newData)
     ->sortKeys()

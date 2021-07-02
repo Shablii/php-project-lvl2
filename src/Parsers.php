@@ -4,7 +4,7 @@ namespace Differ\Parsers;
 
 use Symfony\Component\Yaml\Yaml;
 
-function parsers($file): object
+function parsers(string $file): object
 {
     $typeFile = strpbrk($file, ".");
 

@@ -11,6 +11,8 @@ if (file_exists($autoloadPath1)) {
 
 use function Differ\Differ\genDiff;
 
+const VERSION = "1";
+
 $doc = <<<DOC
 Generate diff
 
@@ -25,11 +27,11 @@ Options:
   --format <fmt>                Report format [default: stylish]
 DOC;
 
-$result = Docopt::handle($doc, array('version' => '26'));
+$options = Docopt::handle($doc, array('version' => VERSION));
 
-$file1 = $result["<firstFile>"];
-$file2 = $result["<secondFile>"];
+$firstFile = $result["<firstFile>"];
+$secondFile = $result["<secondFile>"];
 $format = $result["--format"];
 
-print genDiff($file1, $file2, $format);
+print genDiff($firstFile, $secondFile, $format);
 print "\n";
