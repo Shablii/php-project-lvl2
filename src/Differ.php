@@ -19,7 +19,7 @@ function genDiff(string $firstFile, string $secondFile, string $format = 'stylis
     return formatters($ast, $format);
 }
 
-function fileParser(string $file)
+function fileParser(string $file): array
 {
     $content = file_get_contents($file);
     $type = strpbrk($file, ".");
@@ -55,7 +55,7 @@ function ast(object $oldData, object $newData, string $path = ""): object
     });
 }
 
-function getStatusObject($oldData, $newData): string
+function getStatusObject(mixed $oldData, mixed $newData): string
 {
     if ($oldData === $newData) {
         return "noChenged";

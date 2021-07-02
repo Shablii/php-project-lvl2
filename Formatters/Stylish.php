@@ -11,7 +11,7 @@ function formatter(object $ast, string $sep = ''): array
 {
     $sep .= "    ";
     return collect($ast)
-    ->map(function ($node) use ($sep) {
+    ->map(function ($node) use ($sep): array {
         if (array_key_exists("type", $node)) {
             return [
                 newSep($sep) . $node['key'] . ": {",
@@ -25,7 +25,7 @@ function formatter(object $ast, string $sep = ''): array
     ->all();
 }
 
-function getArray(string $sep, array $node, string $status)
+function getArray(string $sep, array $node, string $status = ' '): array
 {
     $val = $status === "+" || $status === " " ? $node['newValue'] : $node['oldValue'];
     return [
@@ -41,13 +41,12 @@ function getObject(string $sep, array $node, string $status = ' '): string
     return newSep($sep, $status) . $node['key'] . ": " . displeyValue($val);
 }
 
-function getObjectFormat($node, string $sep): array
+function getObjectFormat(array $node, string $sep): array
 {
+    $result = [];
     switch ($node['status']) {
         case 'noChenged':
-            $result[] = is_object($node['newValue'])
-            ? getArray($sep, $node)
-            : getObject($sep, $node);
+            $result[] = getObject($sep, $node);
             break;
         case 'added':
             $result[] = is_object($node['newValue'])

@@ -10,14 +10,14 @@ function plain(object $ast): string
 function formatter(object $ast): array
 {
     return collect($ast)
-    ->map(function ($node) {
+    ->map(function ($node): array {
         if (array_key_exists("type", $node)) {
             return formatter($node['children']);
         }
         return getObjectFormat($node);
     })
     ->flatten()
-    ->reject(function ($name) {
+    ->reject(function ($name): bool {
         return $name == "";
     })
     ->all();
@@ -29,18 +29,18 @@ function getObjectFormat(array $node): array
         case 'noChenged':
             return [];
         case 'added':
-            return ["Property '{$node['path']}' was added with value: " . displeyVal($node['newValue'])];
+            return ["Property '{$node['path']}' was added with value: " . displeyValue($node['newValue'])];
         case 'removed':
             return ["Property '{$node['path']}' was removed"];
         case 'updated':
             return ["Property '{$node['path']}' was updated. From "
-            . displeyVal($node['oldValue']) . " to " . displeyVal($node['newValue'])];
+            . displeyValue($node['oldValue']) . " to " . displeyValue($node['newValue'])];
         default:
             throw new \Exception("unknown status: " . $node['status'] . " for OBJECT in Plain format");
     }
 }
 
-function displeyVal($value): string
+function displeyValue(mixed $value): string | int | float
 {
     if (is_bool($value)) {
         return ($value === true) ? "true" : "false";
