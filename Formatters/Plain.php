@@ -9,8 +9,9 @@ function plain(object $ast): string
 
 function getPath($key, $path)
 {
-    $path[] = $key;
-    return $path;
+    $path = (object) $path;
+    $path->$key = $key;
+    return (array) $path;
 }
 
 function formatter(object $ast, array $path = []): array
@@ -19,11 +20,9 @@ function formatter(object $ast, array $path = []): array
     ->map(function ($node) use ($path): array {
         $path = getPath($node['key'], $path);
         if (array_key_exists("type", $node)) {
-            $node['path'] = $path;
             return formatter($node['children'], $path);
         }
         $node['path'] = $path;
-
         return getObjectFormat($node);
     })
     ->flatten()
@@ -32,6 +31,8 @@ function formatter(object $ast, array $path = []): array
     })
     ->all();
 }
+
+
 
 function getObjectFormat(array $node): array
 {
