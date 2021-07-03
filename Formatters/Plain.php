@@ -7,11 +7,17 @@ function plain(object $ast): string
     return implode("\n", formatter($ast));
 }
 
+function getPath($key, $path)
+{
+    $path[] = $key;
+    return $path;
+}
+
 function formatter(object $ast, array $path = []): array
 {
     return collect($ast)
     ->map(function ($node) use ($path): array {
-        $path[] = $node['key'];
+        $path = getPath($node['key'], $path);
         if (array_key_exists("type", $node)) {
             $node['path'] = $path;
             return formatter($node['children'], $path);
@@ -58,20 +64,4 @@ function displeyValue(mixed $value): string | int | float
     }
 
     return "'$value'";
-}
-
-function newAst($ast, $path = "")
-{
-    return collect($ast)
-    ->map(function ($node) use ($path) {
-        $path .= $path == "" ? $node['key'] : "." . $node['key'];
-        //$oldValue = property_exists($oldData, $key) ? $oldData->$key : 'not exist';
-        //if (property_exists($node, "type")) {
-        if (array_key_exists("type", $node)) {
-            $node['path'] = $path;
-            return newAst($node['children'], $path);
-        }
-        $node['path'] = $path;
-        return $node;
-    })->all();
 }

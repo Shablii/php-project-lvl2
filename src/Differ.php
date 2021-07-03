@@ -53,6 +53,7 @@ function ast(object $oldData, object $newData, string $path = ""): object
 
 function getStatusObject(mixed $oldData, mixed $newData): string
 {
+    $result = "";
     if ($oldData === $newData) {
         $result = "noChenged";
     } elseif ($oldData === "not exist" && $newData !== "not exist") {
