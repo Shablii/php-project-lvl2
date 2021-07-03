@@ -93,15 +93,15 @@ function newSep(string $sep, string $value = " "): string
     return substr($sep, 0, strlen($sep) - 2) . $value . " ";
 }
 
-function displeyValue($val): string
+function displeyValue(mixed $value): string
 {
-    if (is_bool($val)) {
-        $val = ($val === true) ? "true" : "false";
+    if (is_bool($value)) {
+        return ($value === true) ? "true" : "false";
     }
 
-    if ($val === null) {
-        $val = "null";
+    if ($value === null) {
+        return "null";
     }
 
-    return $val;
+    return $value;
 }

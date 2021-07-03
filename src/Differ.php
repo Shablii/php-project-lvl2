@@ -15,7 +15,6 @@ function genDiff(string $firstFile, string $secondFile, string $format = 'stylis
     $newData = parsers($contentSecondFile, $typeSecondFile);
 
     $ast = ast($oldData, $newData);
-
     return formatters($ast, $format);
 }
 
@@ -34,13 +33,11 @@ function ast(object $oldData, object $newData, string $path = ""): object
         $oldValue = property_exists($oldData, $key) ? $oldData->$key : 'not exist';
         $newValue = property_exists($newData, $key) ? $newData->$key : 'not exist';
 
-        $path .= $path == "" ? $key : "." . $key;
         if (is_object($oldValue) && is_object($newValue)) {
             $children = ast($oldValue, $newValue, $path);
             return [
                 'key' => $key,
                 'type' => 'Parent',
-                'path' => $path,
                 'children' => $children
             ];
         } else {
@@ -48,8 +45,7 @@ function ast(object $oldData, object $newData, string $path = ""): object
                 'key' => $key,
                 'oldValue' => $oldValue,
                 'newValue' => $newValue,
-                'status' => getStatusObject($oldValue, $newValue),
-                'path' => $path
+                'status' => getStatusObject($oldValue, $newValue)
             ];
         }
     });
@@ -58,12 +54,13 @@ function ast(object $oldData, object $newData, string $path = ""): object
 function getStatusObject(mixed $oldData, mixed $newData): string
 {
     if ($oldData === $newData) {
-        return "noChenged";
+        $result = "noChenged";
     } elseif ($oldData === "not exist" && $newData !== "not exist") {
-        return "added";
+        $result = "added";
     } elseif ($oldData !== "not exist" && $newData === "not exist") {
-        return "removed";
+        $result = "removed";
     } elseif ($oldData !== "not exist" && $newData !== "not exist") {
-        return "updated";
+        $result = "updated";
     }
+    return $result;
 }
