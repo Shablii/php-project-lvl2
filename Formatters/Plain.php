@@ -14,16 +14,16 @@ function getPath($key, $path)
     return (array) $path;
 }
 
-function formatter(object $ast, array $path = []): array
+function formatter(object $ast, string $path = ''): array
 {
     return collect($ast)
     ->map(function ($node) use ($path): array {
-        $path = getPath($node['key'], $path);
+        $newPath = $path == "" ? $node['key'] : "{$path}.{$node['key']}";
         if (array_key_exists("type", $node)) {
-            return formatter($node['children'], $path);
+            return formatter($node['children'], $newPath);
         }
         $node['path'] = $path;
-        return getObjectFormat($node);
+        return getObjectFormat($node, $newPath);
     })
     ->flatten()
     ->reject(function ($name): bool {
@@ -34,9 +34,8 @@ function formatter(object $ast, array $path = []): array
 
 
 
-function getObjectFormat(array $node): array
+function getObjectFormat(array $node, $path): array
 {
-    $path = implode('.', $node['path']);
     switch ($node['status']) {
         case 'noChenged':
             return [];
