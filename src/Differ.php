@@ -53,15 +53,13 @@ function ast(object $oldData, object $newData, string $path = ""): object
 
 function getStatusObject(mixed $oldData, mixed $newData): string
 {
-    $result = "";
     if ($oldData === $newData) {
-        $result = "noChenged";
+        return "noChenged";
     } elseif ($oldData === "not exist" && $newData !== "not exist") {
-        $result = "added";
+        return "added";
     } elseif ($oldData !== "not exist" && $newData === "not exist") {
-        $result = "removed";
+        return "removed";
     } elseif ($oldData !== "not exist" && $newData !== "not exist") {
-        $result = "updated";
+        return "updated";
     }
-    return $result;
 }
