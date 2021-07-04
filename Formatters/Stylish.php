@@ -43,33 +43,29 @@ function getObject(string $sep, array $node, string $status = ' '): string
 
 function getObjectFormat(array $node, string $sep): array
 {
-    $result = [];
     switch ($node['status']) {
         case 'noChenged':
-            $result[] = getObject($sep, $node);
-            break;
+            return [getObject($sep, $node)];
         case 'added':
-            $result[] = is_object($node['newValue'])
+            return [is_object($node['newValue'])
             ? getArray($sep, $node, "+")
-            : getObject($sep, $node, '+');
-            break;
+            : getObject($sep, $node, '+')];
         case 'removed':
-            $result[] = is_object($node['oldValue'])
+            return [is_object($node['oldValue'])
             ? getArray($sep, $node, "-")
-            : getObject($sep, $node, '-');
-            break;
+            : getObject($sep, $node, '-')];
         case 'updated':
-            $result[] = is_object($node['oldValue'])
+            return [
+                is_object($node['oldValue'])
             ? getArray($sep, $node, "-")
-            : getObject($sep, $node, '-');
-            $result[] = is_object($node['newValue'])
+            : getObject($sep, $node, '-'),
+                 is_object($node['newValue'])
             ? getArray($sep, $node, "+")
-            : getObject($sep, $node, '+');
-            break;
+            : getObject($sep, $node, '+')
+            ];
         default:
             throw new \Exception("unknown status: " . $node['status'] . " for OBJECT in Stylish format");
     }
-    return $result;
 }
 
 function recursivMap(string $sep, object $node): object
