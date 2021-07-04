@@ -7,13 +7,6 @@ function plain(object $ast): string
     return implode("\n", formatter($ast));
 }
 
-function getPath($key, $path)
-{
-    $path = (object) $path;
-    $path->$key = $key;
-    return (array) $path;
-}
-
 function formatter(object $ast, string $path = ''): array
 {
     return collect($ast)
@@ -32,9 +25,7 @@ function formatter(object $ast, string $path = ''): array
     ->all();
 }
 
-
-
-function getObjectFormat(array $node, $path): array
+function getObjectFormat(array $node, string $path): array
 {
     switch ($node['status']) {
         case 'noChenged':
