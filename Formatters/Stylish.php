@@ -70,17 +70,17 @@ function getObjectFormat(array $node, string $sep): array
 
 function recursivMap(string $sep, object $node): object
 {
-    $sep .= "    ";
+    $newSep = "    {$sep}";
     return collect($node)
-    ->map(function ($item, $key) use ($sep) {
+    ->map(function ($item, $key) use ($newSep) {
         if (is_object($item)) {
             return [
-                $sep . $key . ": {",
-                recursivMap($sep, $item),
-                $sep . "}"
+                $newSep . $key . ": {",
+                recursivMap($newSep, $item),
+                $newSep . "}"
                 ];
         }
-        return $sep . $key . ": " . $item;
+        return $newSep . $key . ": " . $item;
     });
 }
 

@@ -61,5 +61,7 @@ function getStatusObject(mixed $oldData, mixed $newData): string
         return "removed";
     } elseif ($oldData !== "not exist" && $newData !== "not exist") {
         return "updated";
+    } else {
+        throw new \Exception("unknown status for: {$oldData} and $newData for getStatusObject in Differ");
     }
 }

@@ -19,75 +19,10 @@ class GenDiffTest extends TestCase
 
     public function testGenDiffStylish(): void
     {
-        $expectant = <<<DOC
-        {
-            common: {
-              + follow: false
-                setting1: Value 1
-              - setting2: 200
-              - setting3: true
-              + setting3: {
-                    key: value
-                }
-              + setting4: blah blah
-              + setting5: {
-                    key5: value5
-                }
-                setting6: {
-                    doge: {
-                      - wow: too much
-                      + wow: so much
-                    }
-                    key: value
-                  + ops: vops
-                }
-            }
-            group1: {
-              - baz: bas
-              + baz: bars
-                foo: bar
-              - nest: {
-                    key: value
-                }
-              + nest: str
-            }
-          - group2: {
-                abc: 12345
-                deep: {
-                    id: 45
-                }
-            }
-          + group3: {
-                deep: {
-                    id: {
-                        number: 45
-                    }
-                }
-                fee: 100500
-            }
-            group4: {
-              - default: null
-              + default: 
-              - foo: 0
-              + foo: null
-              - isNested: false
-              + isNested: none
-              + key: false
-                nest: {
-                  - bar: 
-                  + bar: 0
-                  - isNested: true
-                }
-              + someKey: true
-              - type: bas
-              + type: bar
-            }
-        }
-        DOC;
-
+        $expectant = __DIR__ . "/fixtures/testGenDiffStylish";
         $file1 = __DIR__ . "/fixtures/test1.json";
         $file2 = __DIR__ . "/fixtures/test2.json";
-        $this->assertEquals($expectant, genDiff($file1, $file2));
+        $this->assertStringEqualsFile($expectant, genDiff($file1, $file2, 'stylish'));
     }
 
     public function testGenDiffPlain(): void
