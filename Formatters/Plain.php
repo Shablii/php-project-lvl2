@@ -12,10 +12,9 @@ function formatter(object $ast, string $path = ''): array
     return collect($ast)
     ->map(function ($node) use ($path): array {
         $newPath = $path == "" ? $node['key'] : "{$path}.{$node['key']}";
-        if (array_key_exists("type", $node)) {
+        if ($node['status'] === 'Parent') {
             return formatter($node['children'], $newPath);
         }
-        $node['path'] = $path;
         return getObjectFormat($node, $newPath);
     })
     ->flatten()

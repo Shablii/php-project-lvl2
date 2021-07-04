@@ -9,17 +9,17 @@ function stylish(object $ast): string
 
 function formatter(object $ast, string $sep = ''): array
 {
-    $sep .= "    ";
     return collect($ast)
     ->map(function ($node) use ($sep): array {
-        if (array_key_exists("type", $node)) {
+        $newSep = "    {$sep}";
+        if ($node['status'] === 'Parent') {
             return [
-                newSep($sep) . $node['key'] . ": {",
-                formatter($node['children'], $sep),
-                $sep . "}"
+                newSep($newSep) . $node['key'] . ': {',
+                formatter($node['children'], $newSep),
+                $newSep . '}'
                 ];
         }
-        return getObjectFormat($node, $sep);
+        return getObjectFormat($node, $newSep);
     })
     ->flatten()
     ->all();
