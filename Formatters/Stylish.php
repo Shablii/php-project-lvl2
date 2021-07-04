@@ -10,77 +10,68 @@ function stylish(object $ast): string
 function formatter(object $ast, string $sep = ''): array
 {
     return collect($ast)
-    ->map(function ($node) use ($sep): array {
-        $newSep = "    {$sep}";
-        if ($node['status'] === 'Parent') {
-            return [
-                newSep($newSep) . $node['key'] . ': {',
-                formatter($node['children'], $newSep),
-                $newSep . '}'
-                ];
-        }
-        return getObjectFormat($node, $newSep);
-    })
+    ->map(fn ($node) => getFormat($node, $sep))
     ->flatten()
     ->all();
 }
 
-function getArray(string $sep, array $node, string $status = ' '): array
+function getArray(string $sep, array $node, callable $children, string $status = ' '): array
 {
-    $val = $status === "+" || $status === " " ? $node['newValue'] : $node['oldValue'];
     return [
         newSep($sep, $status) . $node['key'] . ": {",
-        recursivMap($sep, $val),
+        $children(),
         $sep . "}"
         ];
 }
-
 function getObject(string $sep, array $node, string $status = ' '): string
 {
     $val = $status === "+" || $status === " " ? $node['newValue'] : $node['oldValue'];
     return newSep($sep, $status) . $node['key'] . ": " . displeyValue($val);
 }
 
-function getObjectFormat(array $node, string $sep): array
+function getFormat(array $node, string $sep): array
 {
+    $newSep = "    {$sep}";
     switch ($node['status']) {
         case 'noChenged':
-            return [getObject($sep, $node)];
+            return [getObject($newSep, $node)];
         case 'added':
             return [is_object($node['newValue'])
-            ? getArray($sep, $node, "+")
-            : getObject($sep, $node, '+')];
+            ? getArray($newSep, $node, fn() => arrayFormater($node['newValue'], $newSep), "+")
+            : getObject($newSep, $node, '+')];
         case 'removed':
             return [is_object($node['oldValue'])
-            ? getArray($sep, $node, "-")
-            : getObject($sep, $node, '-')];
+            ? getArray($newSep, $node, fn() => arrayFormater($node['oldValue'], $newSep), "-")
+            : getObject($newSep, $node, '-')];
         case 'updated':
             return [
                 is_object($node['oldValue'])
-            ? getArray($sep, $node, "-")
-            : getObject($sep, $node, '-'),
+            ? getArray($newSep, $node, fn() => arrayFormater($node['oldValue'], $newSep), "-")
+            : getObject($newSep, $node, '-'),
                  is_object($node['newValue'])
-            ? getArray($sep, $node, "+")
-            : getObject($sep, $node, '+')
+            ? getArray($newSep, $node, fn() => arrayFormater($node['newValue'], $newSep), "+")
+            : getObject($newSep, $node, '+')
             ];
+        case 'Parent':
+            return getArray($newSep, $node, fn() => formatter($node['children'], $newSep));
         default:
-            throw new \Exception("unknown status: " . $node['status'] . " for OBJECT in Stylish format");
+            throw new \Exception("unknown status: " . $node['status'] . " for getFormat in Stylish format");
     }
 }
 
-function recursivMap(string $sep, object $node): object
+function arrayFormater(object $node, string $sep): object
 {
     $newSep = "    {$sep}";
     return collect($node)
-    ->map(function ($item, $key) use ($newSep) {
-        if (is_object($item)) {
+    ->map(function ($node, $key) use ($newSep) {
+        if (is_object($node)) {
             return [
                 $newSep . $key . ": {",
-                recursivMap($newSep, $item),
+                arrayFormater($node, $newSep),
                 $newSep . "}"
                 ];
         }
-        return $newSep . $key . ": " . $item;
+        return $newSep . $key . ": " . $node;
     });
 }
 

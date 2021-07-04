@@ -10,34 +10,29 @@ function plain(object $ast): string
 function formatter(object $ast, string $path = ''): array
 {
     return collect($ast)
-    ->map(function ($node) use ($path): array {
-        $newPath = $path == "" ? $node['key'] : "{$path}.{$node['key']}";
-        if ($node['status'] === 'Parent') {
-            return formatter($node['children'], $newPath);
-        }
-        return getObjectFormat($node, $newPath);
-    })
+    ->map(fn ($node) => getFormat($node, $path))
     ->flatten()
-    ->reject(function ($name): bool {
-        return $name == "";
-    })
+    ->reject(fn ($name) => $name == "")
     ->all();
 }
 
-function getObjectFormat(array $node, string $path): array
+function getFormat(array $node, string $path): array
 {
+    $newPath = $path == "" ? $node['key'] : "{$path}.{$node['key']}";
     switch ($node['status']) {
         case 'noChenged':
             return [];
         case 'added':
-            return ["Property '{$path}' was added with value: " . displeyValue($node['newValue'])];
+            return ["Property '{$newPath}' was added with value: " . displeyValue($node['newValue'])];
         case 'removed':
-            return ["Property '{$path}' was removed"];
+            return ["Property '{$newPath}' was removed"];
         case 'updated':
-            return ["Property '{$path}' was updated. From "
+            return ["Property '{$newPath}' was updated. From "
             . displeyValue($node['oldValue']) . " to " . displeyValue($node['newValue'])];
+        case "Parent":
+            return formatter($node['children'], $newPath);
         default:
-            throw new \Exception("unknown status: " . $node['status'] . " for OBJECT in Plain format");
+            throw new \Exception("unknown status: " . $node['status'] . " for getFormat in Plain format");
     }
 }
 
@@ -52,6 +47,5 @@ function displeyValue(mixed $value): string | int | float
     } elseif (is_object($value)) {
         return '[complex value]';
     }
-
     return "'$value'";
 }

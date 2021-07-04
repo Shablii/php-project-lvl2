@@ -21,7 +21,7 @@ function genDiff(string $firstFile, string $secondFile, string $format = 'stylis
 function fileParser(string $file): array
 {
     $content = file_get_contents($file);
-    $type = strpbrk($file, ".");
+    $type = pathinfo($file, PATHINFO_EXTENSION);
     return [$content, $type];
 }
 
