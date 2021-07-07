@@ -1,6 +1,6 @@
 <?php
 
-namespace Gendiff\Tests;
+namespace Differ;
 
 use PHPUnit\Framework\TestCase;
 

@@ -11,8 +11,8 @@
     ],
     "autoload": {
         "psr-4": {
-            "Gendiff\\": "src",
-            "Gendiff\\Tests\\": "tests"
+            "Differ\\": "src",
+            "Differ\\Tests\\": "tests"
         },
         "files": [
             "src/Differ.php",
