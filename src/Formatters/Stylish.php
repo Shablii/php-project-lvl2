@@ -15,10 +15,11 @@ function formatter(object $ast, string $sep = ''): array
     ->all();
 }
 
-function getArray(string $sep, array $node, callable $children, string $status = ' '): array
+function getArray(string $sep, array $node, callable $children, string $status = ' ', string $key = ""): array
 {
+    $newKey = $key === "" ? $node['key'] : $key;
     return [
-        newSep($sep, $status) . $node['key'] . ": {",
+        newSep($sep, $status) . $newKey . ": {",
         $children(),
         $sep . "}"
         ];
@@ -52,7 +53,7 @@ function getFormat(array $node, string $sep): array
             ? getArray($newSep, $node, fn() => arrayFormater($node['newValue'], $newSep), "+")
             : getObject($newSep, $node, '+')
             ];
-        case 'Parent':
+        case 'parent':
             return getArray($newSep, $node, fn() => formatter($node['children'], $newSep));
         default:
             throw new \Exception("unknown status: " . $node['status'] . " for getFormat in Stylish format");
@@ -65,11 +66,7 @@ function arrayFormater(object $node, string $sep): object
     return collect($node)
     ->map(function ($node, $key) use ($newSep) {
         if (is_object($node)) {
-            return [
-                $newSep . $key . ": {",
-                arrayFormater($node, $newSep),
-                $newSep . "}"
-                ];
+            return getArray($newSep, (array) $node, fn() => arrayFormater($node, $newSep), " ", $key);
         }
         return $newSep . $key . ": " . $node;
     });

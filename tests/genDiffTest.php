@@ -11,26 +11,26 @@ class GenDiffTest extends TestCase
     public function testGenDiff(): void
     {
         $expectant = __DIR__ . "/fixtures/testGenDiff";
-        $file1 = __DIR__ . "/fixtures/file1.yaml";
-        $file2 = __DIR__ . "/fixtures/file2.yaml";
+        $pathToFirstFile = __DIR__ . "/fixtures/firstFile.yaml";
+        $pathToSecondFile = __DIR__ . "/fixtures/file2.yaml";
 
-        $this->assertStringEqualsFile($expectant, genDiff($file1, $file2));
+        $this->assertStringEqualsFile($expectant, genDiff($pathToFirstFile, $pathToSecondFile));
     }
 
     public function testGenDiffStylish(): void
     {
         $expectant = __DIR__ . "/fixtures/testGenDiffStylish";
-        $file1 = __DIR__ . "/fixtures/test1.json";
-        $file2 = __DIR__ . "/fixtures/test2.json";
-        $this->assertStringEqualsFile($expectant, genDiff($file1, $file2, 'stylish'));
+        $pathToFirstFile = __DIR__ . "/fixtures/test1.json";
+        $pathToSecondFile = __DIR__ . "/fixtures/test2.json";
+        $this->assertStringEqualsFile($expectant, genDiff($pathToFirstFile, $pathToSecondFile, 'stylish'));
     }
 
     public function testGenDiffPlain(): void
     {
         $expectant = __DIR__ . "/fixtures/testGenDiffPlain";
-        $file1 = __DIR__ . "/fixtures/file1.yaml";
-        $file2 = __DIR__ . "/fixtures/file2.yaml";
-        $this->assertStringEqualsFile($expectant, genDiff($file1, $file2, "plain"));
+        $pathToFirstFile = __DIR__ . "/fixtures/firstFile.yaml";
+        $pathToSecondFile = __DIR__ . "/fixtures/file2.yaml";
+        $this->assertStringEqualsFile($expectant, genDiff($pathToFirstFile, $pathToSecondFile, "plain"));
     }
 
     public function testGenDiffJson(): void
@@ -38,8 +38,8 @@ class GenDiffTest extends TestCase
         $fileJson = __DIR__ . "/fixtures/json.json";
         $expectant = file_get_contents($fileJson);
 
-        $file1 = __DIR__ . "/fixtures/file1.json";
-        $file2 = __DIR__ . "/fixtures/file2.json";
-        $this->assertEquals($expectant, genDiff($file1, $file2, "json"));
+        $pathToFirstFile = __DIR__ . "/fixtures/firstFile.json";
+        $pathToSecondFile = __DIR__ . "/fixtures/file2.json";
+        $this->assertEquals($expectant, genDiff($pathToFirstFile, $pathToSecondFile, "json"));
     }
 }

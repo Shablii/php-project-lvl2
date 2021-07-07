@@ -29,7 +29,7 @@ function getFormat(array $node, string $path): array
         case 'updated':
             return ["Property '{$newPath}' was updated. From "
             . displeyValue($node['oldValue']) . " to " . displeyValue($node['newValue'])];
-        case "Parent":
+        case "parent":
             return formatter($node['children'], $newPath);
         default:
             throw new \Exception("unknown status: " . $node['status'] . " for getFormat in Plain format");

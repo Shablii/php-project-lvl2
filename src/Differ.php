@@ -37,7 +37,7 @@ function ast(object $oldData, object $newData, string $path = ""): object
             $children = ast($oldValue, $newValue, $path);
             return [
                 'key' => $key,
-                'status' => 'Parent',
+                'status' => 'parent',
                 'children' => $children
             ];
         } else {
