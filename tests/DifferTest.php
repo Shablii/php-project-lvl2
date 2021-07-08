@@ -6,13 +6,13 @@ use PHPUnit\Framework\TestCase;
 
 use function Differ\Differ\genDiff;
 
-class GenDiffTest extends TestCase
+class DifferTest extends TestCase
 {
     public function testGenDiff(): void
     {
         $expectant = __DIR__ . "/fixtures/testGenDiff";
         $pathToFirstFile = __DIR__ . "/fixtures/firstFile.yaml";
-        $pathToSecondFile = __DIR__ . "/fixtures/file2.yaml";
+        $pathToSecondFile = __DIR__ . "/fixtures/secondFile.yaml";
 
         $this->assertStringEqualsFile($expectant, genDiff($pathToFirstFile, $pathToSecondFile));
     }
@@ -29,7 +29,7 @@ class GenDiffTest extends TestCase
     {
         $expectant = __DIR__ . "/fixtures/testGenDiffPlain";
         $pathToFirstFile = __DIR__ . "/fixtures/firstFile.yaml";
-        $pathToSecondFile = __DIR__ . "/fixtures/file2.yaml";
+        $pathToSecondFile = __DIR__ . "/fixtures/secondFile.yaml";
         $this->assertStringEqualsFile($expectant, genDiff($pathToFirstFile, $pathToSecondFile, "plain"));
     }
 
@@ -39,7 +39,7 @@ class GenDiffTest extends TestCase
         $expectant = file_get_contents($fileJson);
 
         $pathToFirstFile = __DIR__ . "/fixtures/firstFile.json";
-        $pathToSecondFile = __DIR__ . "/fixtures/file2.json";
+        $pathToSecondFile = __DIR__ . "/fixtures/secondFile.json";
         $this->assertEquals($expectant, genDiff($pathToFirstFile, $pathToSecondFile, "json"));
     }
 }
