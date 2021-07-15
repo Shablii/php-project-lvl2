@@ -4,15 +4,13 @@ namespace Differ\Parsers;
 
 use Symfony\Component\Yaml\Yaml;
 
-function parsers(string $content, string $type): object
+function parsers(string $content, string $type): array
 {
     switch ($type) {
         case 'json':
-            return json_decode($content, false);
-        case 'yaml':
-            return Yaml::parse($content, Yaml::PARSE_OBJECT_FOR_MAP);
-        case 'yml':
-            return Yaml::parse($content, Yaml::PARSE_OBJECT_FOR_MAP);
+            return json_decode($content, true);
+        case 'yaml' || 'yml':
+            return Yaml::parse($content);
         default:
             throw new \Exception("unknown file format $type");
     }

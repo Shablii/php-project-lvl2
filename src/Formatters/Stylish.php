@@ -2,90 +2,76 @@
 
 namespace Differ\Formatters\Stylish;
 
-function stylish(object $ast): string
+const NOCHEGED = "    ";
+const ADDED = "  + ";
+const REMOVED = "  - ";
+
+function stylish(array $ast): string
 {
     return "{\n" . implode("\n", formatter($ast)) . "\n}";
 }
 
-function formatter(object $ast, string $sep = ''): array
+function formatter(array $ast, string $space = ""): array
 {
-    return collect($ast)
-    ->map(fn ($node) => getFormat($node, $sep))
-    ->flatten()
-    ->all();
+    return array_map(fn ($node) => getFormat($node, $space), $ast);
 }
 
-function getArray(string $sep, array $node, callable $children, string $status = ' ', string $key = ""): array
+function getFormat(array $node, string $space): string
 {
-    $newKey = $key === "" ? $node['key'] : $key;
-    return [
-        newSep($sep, $status) . $newKey . ": {",
-        $children(),
-        $sep . "}"
-        ];
-}
-function getObject(string $sep, array $node, string $status = ' '): string
-{
-    $val = $status === "+" || $status === " " ? $node['newValue'] : $node['oldValue'];
-    return newSep($sep, $status) . $node['key'] . ": " . displeyValue($val);
-}
-
-function getFormat(array $node, string $sep): array
-{
-    $newSep = "    {$sep}";
+    $newSpace = $space . "    ";
     switch ($node['status']) {
-        case 'noChenged':
-            return [getObject($newSep, $node)];
+        case 'unchanged':
+            $value = $node['newValue'];
+            $status = $space . NOCHEGED;
+            return is_array($value)
+            ? getArrayFormat($value, $node['key'], $status, $newSpace)
+            : "$status{$node['key']}: " . displayValue($value);
         case 'added':
-            return [is_object($node['newValue'])
-            ? getArray($newSep, $node, fn() => arrayFormater($node['newValue'], $newSep), "+")
-            : getObject($newSep, $node, '+')];
+            $value = $node['newValue'];
+            $status = $space . ADDED;
+            return is_array($value)
+            ? getArrayFormat($value, $node['key'], $status, $newSpace)
+            : "$status{$node['key']}: " . displayValue($value);
         case 'removed':
-            return [is_object($node['oldValue'])
-            ? getArray($newSep, $node, fn() => arrayFormater($node['oldValue'], $newSep), "-")
-            : getObject($newSep, $node, '-')];
+            $value = $node['oldValue'];
+            $status = $space . REMOVED;
+            return is_array($value)
+            ? getArrayFormat($value, $node['key'], $status, $newSpace)
+            : "$status{$node['key']}: " . displayValue($value);
         case 'updated':
-            return [
-                is_object($node['oldValue'])
-            ? getArray($newSep, $node, fn() => arrayFormater($node['oldValue'], $newSep), "-")
-            : getObject($newSep, $node, '-'),
-                 is_object($node['newValue'])
-            ? getArray($newSep, $node, fn() => arrayFormater($node['newValue'], $newSep), "+")
-            : getObject($newSep, $node, '+')
-            ];
-        case 'parent':
-            return getArray($newSep, $node, fn() => formatter($node['children'], $newSep));
+            $oldValue = is_array($node['oldValue'])
+            ? getArrayFormat($node['oldValue'], $node['key'], $space . REMOVED, $newSpace)
+            : $space . REMOVED . "{$node['key']}: " . displayValue($node['oldValue']);
+
+            $newValue = is_array($node['newValue'])
+            ? getArrayFormat($node['newValue'], $node['key'], $space . ADDED, $newSpace)
+            : $space . ADDED . "{$node['key']}: " . displayValue($node['newValue']);
+
+            return $oldValue . "\n" . $newValue;
+        case "parent":
+            $newSpace = $space . NOCHEGED;
+            $children = formatter($node['children'], $newSpace);
+            return $newSpace . $node['key'] . ": {\n" . implode("\n", $children) . "\n" . $newSpace . "}";
         default:
-            throw new \Exception("unknown status: " . $node['status'] . " for getFormat in Stylish format");
+            throw new \Exception("unknown status: " . $node['status'] . " for getFormat in Plain format");
     }
 }
 
-function arrayFormater(object $node, string $sep): object
+function getArrayFormat(array $value, string $key, string $status, string $space): string
 {
-    $newSep = "    {$sep}";
-    return collect($node)
-    ->map(function ($node, $key) use ($newSep) {
-        if (is_object($node)) {
-            return getArray($newSep, (array) $node, fn() => arrayFormater($node, $newSep), " ", $key);
-        }
-        return $newSep . $key . ": " . $node;
-    });
+    $newSpace = $space . "    ";
+    $children = array_map(fn ($key) => is_array($value[$key])
+        ? getArrayFormat($value[$key], $key, $newSpace, $newSpace)
+        : $newSpace . $key . ": " . $value[$key], array_keys($value));
+
+    return $status . $key . ": {\n" . implode("\n", $children) . "\n" . $space . "}";
 }
 
-function newSep(string $sep, string $value = " "): string
-{
-    return substr($sep, 0, strlen($sep) - 2) . $value . " ";
-}
-
-function displeyValue(mixed $value): string
+function displayValue(mixed $value): string
 {
     if (is_bool($value)) {
         return ($value === true) ? "true" : "false";
     }
 
-    if ($value === null) {
-        return "null";
-    }
-
-    return $value;
+    return is_null($value) ? "null" : $value;
 }

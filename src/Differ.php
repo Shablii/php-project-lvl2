@@ -8,8 +8,8 @@ use function Differ\Formatters\formatters;
 function genDiff(string $firstFile, string $secondFile, string $format = 'stylish'): string
 {
 
-    [$contentFirstFile, $typeFirstFile] = fileParser($firstFile);
-    [$contentSecondFile, $typeSecondFile] = fileParser($secondFile);
+    [$contentFirstFile, $typeFirstFile] = getData($firstFile);
+    [$contentSecondFile, $typeSecondFile] = getData($secondFile);
 
     $oldData = parsers($contentFirstFile, $typeFirstFile);
     $newData = parsers($contentSecondFile, $typeSecondFile);
@@ -18,22 +18,28 @@ function genDiff(string $firstFile, string $secondFile, string $format = 'stylis
     return formatters($ast, $format);
 }
 
-function fileParser(string $file): array
+function getData(string $file): array
 {
     $content = file_get_contents($file);
+    if (!$content) {
+        throw new \Exception("Can't read file: $file");
+    }
     $type = pathinfo($file, PATHINFO_EXTENSION);
     return [$content, $type];
 }
 
-function ast(object $oldData, object $newData, string $path = ""): object
+function ast(array $oldData, array $newData, string $path = ""): array
 {
-    return collect($oldData)->merge($newData)
-    ->sortKeys()
-    ->map(function ($node, $key) use ($oldData, $newData, $path) {
-        $oldValue = property_exists($oldData, $key) ? $oldData->$key : 'not exist';
-        $newValue = property_exists($newData, $key) ? $newData->$key : 'not exist';
+    $marge = array_merge($oldData, $newData);
 
-        if (is_object($oldValue) && is_object($newValue)) {
+    ksort($marge);
+
+    return array_map(function ($key) use ($oldData, $newData, $path) {
+
+        $oldValue = array_key_exists($key, $oldData) ? $oldData[$key] : 'not exist';
+        $newValue = array_key_exists($key, $newData) ? $newData[$key] : 'not exist';
+
+        if (is_array($oldValue) && is_array($newValue)) {
             $children = ast($oldValue, $newValue, $path);
             return [
                 'key' => $key,
@@ -48,20 +54,24 @@ function ast(object $oldData, object $newData, string $path = ""): object
                 'status' => getStatusObject($oldValue, $newValue)
             ];
         }
-    });
+    }, array_keys($marge));
 }
 
 function getStatusObject(mixed $oldData, mixed $newData): string
 {
     if ($oldData === $newData) {
-        return "noChenged";
-    } elseif ($oldData === "not exist" && $newData !== "not exist") {
+        return "unchanged";
+    }
+
+    if ($oldData === "not exist" && $newData !== "not exist") {
         return "added";
-    } elseif ($oldData !== "not exist" && $newData === "not exist") {
+    }
+
+    if ($oldData !== "not exist" && $newData === "not exist") {
         return "removed";
-    } elseif ($oldData !== "not exist" && $newData !== "not exist") {
+    }
+
+    if ($oldData !== "not exist" && $newData !== "not exist") {
         return "updated";
-    } else {
-        throw new \Exception("unknown status for: {$oldData} and $newData for getStatusObject in Differ");
     }
 }
