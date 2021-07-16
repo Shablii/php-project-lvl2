@@ -4,6 +4,7 @@ namespace Differ\Differ;
 
 use function Differ\Parsers\parsers;
 use function Differ\Formatters\formatters;
+use function Functional\sort;
 
 function genDiff(string $firstFile, string $secondFile, string $format = 'stylish'): string
 {
@@ -21,7 +22,7 @@ function genDiff(string $firstFile, string $secondFile, string $format = 'stylis
 function getData(string $file): array
 {
     $content = file_get_contents($file);
-    if (!$content) {
+    if ($content === false) {
         throw new \Exception("Can't read file: $file");
     }
     $type = pathinfo($file, PATHINFO_EXTENSION);
@@ -30,9 +31,8 @@ function getData(string $file): array
 
 function ast(array $oldData, array $newData, string $path = ""): array
 {
-    $marge = array_merge($oldData, $newData);
-
-    ksort($marge);
+    $keys = array_keys(array_merge($oldData, $newData));
+    $sortKeys = sort($keys, fn ($oldData, $newData) => $oldData <=> $newData);
 
     return array_map(function ($key) use ($oldData, $newData, $path) {
 
@@ -54,24 +54,20 @@ function ast(array $oldData, array $newData, string $path = ""): array
                 'status' => getStatusObject($oldValue, $newValue)
             ];
         }
-    }, array_keys($marge));
+    }, $sortKeys);
 }
 
 function getStatusObject(mixed $oldData, mixed $newData): string
 {
     if ($oldData === $newData) {
         return "unchanged";
-    }
-
-    if ($oldData === "not exist" && $newData !== "not exist") {
+    } elseif ($oldData === "not exist" && $newData !== "not exist") {
         return "added";
-    }
-
-    if ($oldData !== "not exist" && $newData === "not exist") {
+    } elseif ($oldData !== "not exist" && $newData === "not exist") {
         return "removed";
-    }
-
-    if ($oldData !== "not exist" && $newData !== "not exist") {
+    } elseif ($oldData !== "not exist" && $newData !== "not exist") {
         return "updated";
+    } else {
+        throw new \Exception("unknown status for: {$oldData} and $newData for getStatusObject in Differ");
     }
 }

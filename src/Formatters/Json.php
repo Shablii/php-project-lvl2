@@ -2,7 +2,11 @@
 
 namespace Differ\Formatters\Json;
 
-function json($ast): string
+function json(array $ast): string
 {
-    return json_encode($ast);
+    $json = json_encode($ast);
+    if ($json === false) {
+        throw new \Exception("Can't convert to json: $ast");
+    }
+    return $json;
 }

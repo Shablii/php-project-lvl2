@@ -7,7 +7,7 @@ function plain(array $ast): string
     return implode("\n", formatter($ast));
 }
 
-function formatter($ast, string $path = ''): array
+function formatter(array $ast, string $path = ''): array
 {
     $result = array_map(fn ($node) => getFormat($node, $path), $ast);
 

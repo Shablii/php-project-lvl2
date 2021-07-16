@@ -49,9 +49,9 @@ function getFormat(array $node, string $space): string
 
             return $oldValue . "\n" . $newValue;
         case "parent":
-            $newSpace = $space . NOCHEGED;
+            $status = $space . NOCHEGED;
             $children = formatter($node['children'], $newSpace);
-            return $newSpace . $node['key'] . ": {\n" . implode("\n", $children) . "\n" . $newSpace . "}";
+            return $status . $node['key'] . ": {\n" . implode("\n", $children) . "\n" . $status . "}";
         default:
             throw new \Exception("unknown status: " . $node['status'] . " for getFormat in Plain format");
     }
