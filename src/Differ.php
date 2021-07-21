@@ -46,14 +46,13 @@ function getAst(array $oldData, array $newData): array
                 'status' => 'parent',
                 'children' => $children
             ];
-        } else {
-            return[
-                'key' => $key,
-                'oldValue' => $oldValue,
-                'newValue' => $newValue,
-                'status' => getStatusObject($oldValue, $newValue)
-            ];
         }
+        return[
+            'key' => $key,
+            'oldValue' => $oldValue,
+            'newValue' => $newValue,
+            'status' => getStatusObject($oldValue, $newValue)
+        ];
     }, $sortKeys);
 }
 
