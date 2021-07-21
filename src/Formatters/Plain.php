@@ -2,7 +2,7 @@
 
 namespace Differ\Formatters\Plain;
 
-function plain(array $ast): string
+function getPlainFormat(array $ast): string
 {
     return implode("\n", formatter($ast));
 }
@@ -11,15 +11,15 @@ function formatter(array $ast, string $path = ''): array
 {
     $result = array_map(fn ($node) => getFormat($node, $path), $ast);
 
-    return array_filter($result, fn ($name) => $name !== "");
+    return array_filter($result, fn ($name) => !is_null($name));
 }
 
-function getFormat(array $node, string $path): string
+function getFormat(array $node, string $path): string | null
 {
     $newPath = $path == "" ? $node['key'] : "{$path}.{$node['key']}";
     switch ($node['status']) {
         case 'unchanged':
-            return '';
+            return null;
         case 'added':
             return "Property '{$newPath}' was added with value: " . displayValue($node['newValue']);
         case 'removed':

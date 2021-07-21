@@ -2,9 +2,9 @@
 
 namespace Differ\Formatters\Json;
 
-function json(array $ast): string
+function getJsonFormat(array $data): string
 {
-    $json = json_encode($ast);
+    $json = json_encode($data);
     if ($json === false) {
         throw new \Exception("Can't convert to json");
     }

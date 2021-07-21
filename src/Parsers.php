@@ -13,6 +13,6 @@ function parsers(string $content, string $type): array
         case 'yml':
             return Yaml::parse($content);
         default:
-            throw new \Exception("unknown file format $type");
+            throw new \Exception("unknown file format {$type}");
     }
 }
