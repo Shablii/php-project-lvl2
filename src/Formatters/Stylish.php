@@ -2,44 +2,44 @@
 
 namespace Differ\Formatters\Stylish;
 
-const IDENT = ['unchanged' => '    ', 'added' => '  + ', 'removed' => '  - '];
-
-function getStylishFormat(array $ast): string
+function getStylishFormat(array $data): string
 {
-    return "{\n" . implode("\n", formatter($ast)) . "\n}";
+    return "{\n" . implode("\n", getDiff($data)) . "\n}";
 }
 
-function formatter(array $ast, string $space = ""): array
+function getDiff(array $data, string $space = ""): array
 {
-    return array_map(fn ($node) => getFormat($node, $space), $ast);
+    return array_map(fn ($node) => getFormat($node, $space), $data);
 }
 
 function getFormat(array $node, string $space): string
 {
+    $ident = ['unchanged' => '    ', 'added' => '  + ', 'removed' => '  - '];
     $newSpace = $space . "    ";
     switch ($node['status']) {
         case 'unchanged':
         case 'added':
         case 'removed':
             $value = $node['status'] === 'removed' ? $node['oldValue'] : $node['newValue'];
-            $status = $space . IDENT[$node['status']];
+            $status = $space . $ident[$node['status']];
+            $ident = ['unchanged' => '    ', 'added' => '  + ', 'removed' => '  - '];
             return is_array($value)
             ? getArrayFormat($value, $node['key'], $status, $newSpace)
             : "{$status}{$node['key']}: " . displayValue($value);
 
         case 'updated':
             $oldValue = is_array($node['oldValue'])
-            ? getArrayFormat($node['oldValue'], $node['key'], $space . IDENT['removed'], $newSpace)
-            : $space . IDENT['removed'] . "{$node['key']}: " . displayValue($node['oldValue']);
+            ? getArrayFormat($node['oldValue'], $node['key'], $space . $ident['removed'], $newSpace)
+            : $space . $ident['removed'] . "{$node['key']}: " . displayValue($node['oldValue']);
 
             $newValue = is_array($node['newValue'])
-            ? getArrayFormat($node['newValue'], $node['key'], $space . IDENT['added'], $newSpace)
-            : $space . IDENT['added'] . "{$node['key']}: " . displayValue($node['newValue']);
+            ? getArrayFormat($node['newValue'], $node['key'], $space . $ident['added'], $newSpace)
+            : $space . $ident['added'] . "{$node['key']}: " . displayValue($node['newValue']);
 
             return $oldValue . "\n" . $newValue;
 
         case "parent":
-            $children = formatter($node['children'], $newSpace);
+            $children = getDiff($node['children'], $newSpace);
             return $newSpace . $node['key'] . ": {\n" . implode("\n", $children) . "\n" . $newSpace . "}";
         default:
             throw new \Exception("unknown status: " . $node['status'] . " for getFormat in Plain format");

@@ -2,14 +2,14 @@
 
 namespace Differ\Formatters\Plain;
 
-function getPlainFormat(array $ast): string
+function getPlainFormat(array $data): string
 {
-    return implode("\n", formatter($ast));
+    return implode("\n", getDiff($data));
 }
 
-function formatter(array $ast, string $path = ''): array
+function getDiff(array $data, string $path = ''): array
 {
-    $result = array_map(fn ($node) => getFormat($node, $path), $ast);
+    $result = array_map(fn ($node) => getFormat($node, $path), $data);
 
     return array_filter($result, fn ($name) => !is_null($name));
 }
@@ -28,7 +28,7 @@ function getFormat(array $node, string $path): string | null
             return "Property '{$newPath}' was updated. From "
             . displayValue($node['oldValue']) . " to " . displayValue($node['newValue']);
         case "parent":
-            return implode("\n", formatter($node['children'], $newPath));
+            return implode("\n", getDiff($node['children'], $newPath));
         default:
             throw new \Exception("unknown status: " . $node['status'] . " for getFormat in Plain format");
     }
