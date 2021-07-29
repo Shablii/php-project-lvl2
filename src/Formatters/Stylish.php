@@ -22,7 +22,6 @@ function getFormat(array $node, string $space): string
         case 'removed':
             $value = $node['status'] === 'removed' ? $node['oldValue'] : $node['newValue'];
             $status = $space . $ident[$node['status']];
-            $ident = ['unchanged' => '    ', 'added' => '  + ', 'removed' => '  - '];
             return is_array($value)
             ? getArrayFormat($value, $node['key'], $status, $newSpace)
             : "{$status}{$node['key']}: " . displayValue($value);
